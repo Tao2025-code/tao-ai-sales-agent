@@ -1,6 +1,4 @@
-
-import { useState } from "react";
-import type React from "react";
+import React, { useState } from "react";
 
 /**
  * TaoDashboard.tsx
@@ -435,55 +433,55 @@ const InvestorModelView: React.FC = () => {
   const [y1, y2, y3] = basePnL;
 
   /** ---- SENSIBILIDAD Y3 ---- */
-  const baseSensitivity: Sensitivity[] = [
-    {
-      name: "Downside",
-      closings: 450,
-      blendedCapture: 0.03,
-      closeRate: 0.015,
-      cpl: 50,
-      gmv: 0,
-      leads: 0,
-      media: 0,
-      commissionRevenue: 0,
-      brokerShare: 0,
-      salariesPlusOH: 0,
-      net: 0,
-      netMarginOnRev: 0,
-    },
-    {
-      name: "Base",
-      closings: closingsY3, // usamos los cierres de Y3 actuales
-      blendedCapture: capture,
-      closeRate: effectiveCloseRate,
-      cpl,
-      gmv: 0,
-      leads: 0,
-      media: 0,
-      commissionRevenue: 0,
-      brokerShare: 0,
-      salariesPlusOH: 0,
-      net: 0,
-      netMarginOnRev: 0,
-    },
-    {
-      name: "Upside",
-      closings: 900,
-      blendedCapture: 0.043,
-      closeRate: 0.03,
-      cpl: 25,
-      gmv: 0,
-      leads: 0,
-      media: 0,
-      commissionRevenue: 0,
-      brokerShare: 0,
-      salariesPlusOH: 0,
-      net: 0,
-      netMarginOnRev: 0,
-    },
-  ];
-
-  const sensitivity: Sensitivity[] = baseSensitivity.map((s) => {
+  const sensitivity: Sensitivity[] = (
+    [
+      {
+        name: "Downside",
+        closings: 450,
+        blendedCapture: 0.03,
+        closeRate: 0.015,
+        cpl: 50,
+        gmv: 0,
+        leads: 0,
+        media: 0,
+        commissionRevenue: 0,
+        brokerShare: 0,
+        salariesPlusOH: 0,
+        net: 0,
+        netMarginOnRev: 0,
+      },
+      {
+        name: "Base",
+        closings: closingsY3, // usamos los cierres de Y3 actuales
+        blendedCapture: capture,
+        closeRate: effectiveCloseRate,
+        cpl,
+        gmv: 0,
+        leads: 0,
+        media: 0,
+        commissionRevenue: 0,
+        brokerShare: 0,
+        salariesPlusOH: 0,
+        net: 0,
+        netMarginOnRev: 0,
+      },
+      {
+        name: "Upside",
+        closings: 900,
+        blendedCapture: 0.043,
+        closeRate: 0.03,
+        cpl: 25,
+        gmv: 0,
+        leads: 0,
+        media: 0,
+        commissionRevenue: 0,
+        brokerShare: 0,
+        salariesPlusOH: 0,
+        net: 0,
+        netMarginOnRev: 0,
+      },
+    ] as const
+  ).map((s) => {
     const gmv = s.closings * asp;
     const leads = Math.round(s.closings / Math.max(s.closeRate, 0.0001));
     const media = Math.round(leads * s.cpl);
