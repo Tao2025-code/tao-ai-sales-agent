@@ -702,6 +702,32 @@ const InvestorModelView: React.FC = () => {
           cierres / tasa de cierre y medios = leads × CPL); los sueldos anuales Y1 suman los salarios
           mensuales activos del equipo en Y1 × 12.
         </div>
+        <div style={{ ...styles.headNote, color: "#111827", background: "#f9fafb", padding: 12 }}>
+          <strong>Justificación de valores iniciales.</strong>
+          <ul style={{ margin: "8px 0 0 16px", lineHeight: 1.5 }}>
+            <li>
+              <strong>ASP (USD 225k):</strong> ticket medio histórico de ventas de tierra y condo en Riviera
+              Maya (mix de unidades entre USD 180k–260k), consistente con el pipeline actual.
+            </li>
+            <li>
+              <strong>Captura mezclada (3.65%):</strong> promedio ponderado entre proyectos con comisión del 3%
+              y desarrollos con estructura 4–5%, asumiendo 70% inventario directo y 30% co-broker.
+            </li>
+            <li>
+              <strong>Tasa de cierre (2%):</strong> ratio observado en campañas digitales pasadas (1.6%–2.2%)
+              sobre leads calificados, conservador para un primer año con nuevos flujos de nurturing.
+            </li>
+            <li>
+              <strong>CPL mezclado (USD 30):</strong> mezcla de canales orgánicos y pagados (SEM, sociales y
+              referidos) que han oscilado entre USD 18–40 por lead en pruebas recientes.
+            </li>
+            <li>
+              <strong>Cierres Y1/Y2/Y3 (180 / 400 / 650):</strong> deriva de la capacidad del equipo (2
+              analistas + brokers externos) y ramp-up trimestral: ~15 cierres mensuales promedio en Y1,
+              duplicando productividad con mayor inventario y automatización en Y2–Y3.
+            </li>
+          </ul>
+        </div>
       </header>
 
       {/* Controles */}
