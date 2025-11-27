@@ -4,6 +4,6 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   // Ensure assets resolve correctly when served from the GitHub Pages subpath.
-  base: '/ai-sales-agent/',
+  base: '/tao-ai-sales-agent/',
   plugins: [react()],
 })
