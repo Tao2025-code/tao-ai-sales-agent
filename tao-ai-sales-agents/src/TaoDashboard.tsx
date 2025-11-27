@@ -58,12 +58,23 @@ type FlowStep = {
   text: string;
 };
 
+type TeamRole = "GM" | "Sr Analyst" | "Jr Analyst";
+type HireYear = "Y0" | "Y1" | "Y2" | "Y3";
+
+type TeamMember = {
+  id: string;
+  name: string;
+  title: string;
+  role: TeamRole;
+  monthlySalary: number;
+  hireYear: HireYear;
+  active: boolean;
+};
+
 /** ---------------------------
  *  CONSTANTES
  *  --------------------------- */
 const BROKER_SHARE_RATE = 0.25;
-const SEED_TARGET = 150_000;
-
 // Sueldos base (Luis = 0; AI Sr + AI Spec sí cuentan)
 const GM_MONTHLY_SALARY = 0;
 const AI_SR_MONTHLY_SALARY = 4_000;
@@ -81,6 +92,64 @@ const BASE_CLOSINGS = [180, 400, 650];
 
 // Brainium: solo meses, el monto va en la UI
 const BRAINIUM_FEE_MONTHS = 6;
+
+// Equipo
+const TEAM_ROLES: TeamRole[] = ["GM", "Sr Analyst", "Jr Analyst"];
+const HIRE_YEARS: HireYear[] = ["Y0", "Y1", "Y2", "Y3"];
+const HIRE_YEAR_ORDER: Record<HireYear, number> = {
+  Y0: 0,
+  Y1: 1,
+  Y2: 2,
+  Y3: 3,
+};
+
+const DEFAULT_TEAM: TeamMember[] = [
+  {
+    id: "gm",
+    name: "Luis (GM)",
+    title: "General Manager",
+    role: "GM",
+    monthlySalary: GM_MONTHLY_SALARY,
+    hireYear: "Y1",
+    active: true,
+  },
+  {
+    id: "sr-analyst",
+    name: "AI Sr Analyst",
+    title: "Sr Analyst",
+    role: "Sr Analyst",
+    monthlySalary: AI_SR_MONTHLY_SALARY,
+    hireYear: "Y1",
+    active: true,
+  },
+  {
+    id: "jr-analyst",
+    name: "AI Specialist",
+    title: "Jr Analyst",
+    role: "Jr Analyst",
+    monthlySalary: AI_SPEC_MONTHLY_SALARY,
+    hireYear: "Y1",
+    active: true,
+  },
+  {
+    id: "fourth",
+    name: "4º empleado",
+    title: "TBD",
+    role: "Jr Analyst",
+    monthlySalary: 2_500,
+    hireYear: "Y1",
+    active: false,
+  },
+  {
+    id: "fifth",
+    name: "5º empleado",
+    title: "TBD",
+    role: "Jr Analyst",
+    monthlySalary: 2_500,
+    hireYear: "Y1",
+    active: false,
+  },
+];
 
 // Caja
 const MONTHS_PRE_SALES = 3;
@@ -315,12 +384,6 @@ const InvestorModelView: React.FC = () => {
   const DEFAULT_CLOSINGS_Y2 = BASE_CLOSINGS[1];
   const DEFAULT_CLOSINGS_Y3 = BASE_CLOSINGS[2];
 
-  // Equipo
-  const DEFAULT_EXTRA_ENABLED = false;
-  const DEFAULT_EXTRA_MONTHLY = 2_500;
-  const DEFAULT_FIFTH_ENABLED = false;
-  const DEFAULT_FIFTH_MONTHLY = 2_500;
-
   // Brainium
   const DEFAULT_BRAINIUM_MONTHLY_FEE = 10_000;
   const DEFAULT_BRAINIUM_SUCCESS_FEE = 0;
@@ -348,11 +411,8 @@ const InvestorModelView: React.FC = () => {
     DEFAULT_BRAINIUM_REVSHARE_PCT
   );
 
-  // 4º y 5º empleado
-  const [extraEnabled, setExtraEnabled] = useState<boolean>(DEFAULT_EXTRA_ENABLED);
-  const [extraMonthly, setExtraMonthly] = useState<number>(DEFAULT_EXTRA_MONTHLY);
-  const [fifthEnabled, setFifthEnabled] = useState<boolean>(DEFAULT_FIFTH_ENABLED);
-  const [fifthMonthly, setFifthMonthly] = useState<number>(DEFAULT_FIFTH_MONTHLY);
+  // Equipo completo
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([...DEFAULT_TEAM]);
 
   // Reset
   const handleReset = () => {
@@ -369,10 +429,13 @@ const InvestorModelView: React.FC = () => {
     setBrainiumSuccessFee(DEFAULT_BRAINIUM_SUCCESS_FEE);
     setBrainiumRevSharePct(DEFAULT_BRAINIUM_REVSHARE_PCT);
 
-    setExtraEnabled(DEFAULT_EXTRA_ENABLED);
-    setExtraMonthly(DEFAULT_EXTRA_MONTHLY);
-    setFifthEnabled(DEFAULT_FIFTH_ENABLED);
-    setFifthMonthly(DEFAULT_FIFTH_MONTHLY);
+    setTeamMembers([...DEFAULT_TEAM]);
+  };
+
+  const updateTeamMember = (id: string, updates: Partial<TeamMember>) => {
+    setTeamMembers((prev) =>
+      prev.map((member) => (member.id === id ? { ...member, ...updates } : member))
+    );
   };
 
   // Derivados
@@ -384,20 +447,25 @@ const InvestorModelView: React.FC = () => {
   const brainiumFeeY1 = brainiumMonthlyFee * BRAINIUM_FEE_MONTHS;
   const overheadY1 = OVERHEAD_ANNUAL + brainiumFeeY1 + brainiumSuccessFee;
 
-  const extraMonthlyEffective = extraEnabled ? extraMonthly : 0;
-  const fifthMonthlyEffective = fifthEnabled ? fifthMonthly : 0;
+  const activeTeamMembers = teamMembers.filter((member) => member.active);
 
-  const totalMonthlySalaries =
-    GM_MONTHLY_SALARY +
-    AI_SR_MONTHLY_SALARY +
-    AI_SPEC_MONTHLY_SALARY +
-    extraMonthlyEffective +
-    fifthMonthlyEffective;
+  const monthlySalariesByYear = [1, 2, 3].map((yearNumber) =>
+    activeTeamMembers.reduce((sum, member) => {
+      return HIRE_YEAR_ORDER[member.hireYear] <= yearNumber
+        ? sum + member.monthlySalary
+        : sum;
+    }, 0)
+  );
 
-  const SALARIES_Y1 = totalMonthlySalaries * 12;
-  const SALARIES_Y2Y3 = totalMonthlySalaries * 12;
+  const [monthlySalariesY1, monthlySalariesY2, monthlySalariesY3] =
+    monthlySalariesByYear;
+
+  const SALARIES_Y1 = monthlySalariesY1 * 12;
+  const SALARIES_Y2 = monthlySalariesY2 * 12;
+  const SALARIES_Y3 = monthlySalariesY3 * 12;
 
   const closingsByYear = [closingsY1, closingsY2, closingsY3];
+  const salariesByYear = [SALARIES_Y1, SALARIES_Y2, SALARIES_Y3];
 
   /** ---- P&L 3 AÑOS (BASE) ---- */
   const basePnL: PnLYear[] = closingsByYear.map((closings, idx) => {
@@ -408,7 +476,7 @@ const InvestorModelView: React.FC = () => {
 
     const commissionRevenue = gmv * capture;
     const brokerShare = commissionRevenue * BROKER_SHARE_RATE;
-    const salaries = year === 1 ? SALARIES_Y1 : SALARIES_Y2Y3;
+    const salaries = salariesByYear[idx];
     const overhead = year === 1 ? overheadY1 : OVERHEAD_ANNUAL;
     const brainiumRevShare = commissionRevenue * brainiumRevShareRate;
 
@@ -430,7 +498,18 @@ const InvestorModelView: React.FC = () => {
     };
   });
 
-  const [y1, y2, y3] = basePnL;
+  const [y1] = basePnL;
+
+  const brainiumRevShareY1 = y1.commissionRevenue * brainiumRevShareRate;
+  const brainiumTotalY1 = brainiumFeeY1 + brainiumSuccessFee + brainiumRevShareY1;
+
+  const teamDashboardRows = activeTeamMembers.map((member) => [
+    member.name || member.title,
+    member.title,
+    member.role,
+    member.hireYear,
+    usd0(member.monthlySalary),
+  ]);
 
   /** ---- SENSIBILIDAD Y3 ---- */
   const sensitivity: Sensitivity[] = (
@@ -487,7 +566,7 @@ const InvestorModelView: React.FC = () => {
     const media = Math.round(leads * s.cpl);
     const commissionRevenue = gmv * s.blendedCapture;
     const brokerShare = commissionRevenue * BROKER_SHARE_RATE;
-    const salariesPlusOH = SALARIES_Y2Y3 + OVERHEAD_ANNUAL;
+    const salariesPlusOH = SALARIES_Y3 + OVERHEAD_ANNUAL;
     const brainiumRevShare = commissionRevenue * brainiumRevShareRate;
     const net = commissionRevenue - media - brokerShare - salariesPlusOH - brainiumRevShare;
     const netMarginOnRev = commissionRevenue === 0 ? 0 : net / commissionRevenue;
@@ -585,6 +664,14 @@ const InvestorModelView: React.FC = () => {
     usd0(s.net),
     pct1(s.netMarginOnRev),
   ]);
+
+  const teamDashboardHeaders = [
+    "Nombre",
+    "Título",
+    "Rol",
+    "Año de contratación",
+    "Sueldo (USD/mes)",
+  ];
 
   return (
     <div style={styles.wrap}>
@@ -726,55 +813,116 @@ const InvestorModelView: React.FC = () => {
 
             {/* Equipo */}
             <div style={styles.controlGroup}>
-              <div style={styles.controlLabel}>Equipo (4º y 5º empleado)</div>
+              <div style={styles.controlLabel}>Equipo y contrataciones</div>
 
-              <div style={styles.toggleRow}>
-                <input
-                  type="checkbox"
-                  checked={extraEnabled}
-                  onChange={(e) => setExtraEnabled(e.target.checked)}
-                />
-                <span style={{ fontSize: 12, color: "#111827" }}>Incluir 4º empleado</span>
-              </div>
-              <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>
-                  Sueldo 4º empleado (USD/mes)
-                </label>
-                <input
-                  type="number"
-                  min={0}
-                  step={500}
-                  value={extraMonthly}
-                  onChange={(e) => setExtraMonthly(Number(e.target.value) || 0)}
-                  style={styles.controlInput}
-                />
+              <div style={styles.controlHelp}>
+                Define el rol, sueldo mensual y año de contratación (Y0 = contratado antes de Y1).
               </div>
 
-              <div style={styles.toggleRow}>
-                <input
-                  type="checkbox"
-                  checked={fifthEnabled}
-                  onChange={(e) => setFifthEnabled(e.target.checked)}
-                />
-                <span style={{ fontSize: 12, color: "#111827" }}>Incluir 5º empleado</span>
-              </div>
-              <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>
-                  Sueldo 5º empleado (USD/mes)
-                </label>
-                <input
-                  type="number"
-                  min={0}
-                  step={500}
-                  value={fifthMonthly}
-                  onChange={(e) => setFifthMonthly(Number(e.target.value) || 0)}
-                  style={styles.controlInput}
-                />
+              <div style={styles.teamGrid}>
+                {teamMembers.map((member) => (
+                  <div key={member.id} style={styles.teamMemberCard}>
+                    <div style={styles.teamMemberHeader}>
+                      <div style={{ fontWeight: 600 }}>{member.name || "Miembro"}</div>
+                      <label style={styles.teamToggleLabel}>
+                        <input
+                          type="checkbox"
+                          checked={member.active}
+                          onChange={(e) =>
+                            updateTeamMember(member.id, { active: e.target.checked })
+                          }
+                          style={{ marginRight: 6 }}
+                        />
+                        Activo
+                      </label>
+                    </div>
+
+                    <div style={styles.teamFieldsGrid}>
+                      <div style={styles.controlField}>
+                        <label style={styles.controlFieldLabel}>Nombre</label>
+                        <input
+                          type="text"
+                          value={member.name}
+                          onChange={(e) =>
+                            updateTeamMember(member.id, { name: e.target.value })
+                          }
+                          style={styles.controlInput}
+                        />
+                      </div>
+
+                      <div style={styles.controlField}>
+                        <label style={styles.controlFieldLabel}>Título</label>
+                        <input
+                          type="text"
+                          value={member.title}
+                          onChange={(e) =>
+                            updateTeamMember(member.id, { title: e.target.value })
+                          }
+                          style={styles.controlInput}
+                        />
+                      </div>
+
+                      <div style={styles.controlField}>
+                        <label style={styles.controlFieldLabel}>Rol</label>
+                        <select
+                          value={member.role}
+                          onChange={(e) =>
+                            updateTeamMember(member.id, {
+                              role: e.target.value as TeamRole,
+                            })
+                          }
+                          style={styles.controlInput}
+                        >
+                          {TEAM_ROLES.map((role) => (
+                            <option key={role} value={role}>
+                              {role}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div style={styles.controlField}>
+                        <label style={styles.controlFieldLabel}>Sueldo (USD/mes)</label>
+                        <input
+                          type="number"
+                          min={0}
+                          step={250}
+                          value={member.monthlySalary}
+                          onChange={(e) =>
+                            updateTeamMember(member.id, {
+                              monthlySalary: Number(e.target.value) || 0,
+                            })
+                          }
+                          style={styles.controlInput}
+                        />
+                      </div>
+
+                      <div style={styles.controlField}>
+                        <label style={styles.controlFieldLabel}>Año de contratación</label>
+                        <select
+                          value={member.hireYear}
+                          onChange={(e) =>
+                            updateTeamMember(member.id, {
+                              hireYear: e.target.value as HireYear,
+                            })
+                          }
+                          style={styles.controlInput}
+                        >
+                          {HIRE_YEARS.map((year) => (
+                            <option key={year} value={year}>
+                              {year}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               <div style={styles.controlHelp}>
-                Sueldos anuales actuales (incluyendo 4º/5º empleado si aplican):{" "}
-                <strong>{usd0(SALARIES_Y1)}</strong>.
+                Sueldos anuales según equipo activo: Y1 <strong>{usd0(SALARIES_Y1)}</strong> ·
+                Y2 <strong>{usd0(SALARIES_Y2)}</strong> · Y3 <strong>{usd0(SALARIES_Y3)}</strong>.
               </div>
             </div>
 
@@ -826,30 +974,30 @@ const InvestorModelView: React.FC = () => {
               </div>
 
               <div style={styles.controlHelp}>
-                Total Y1 Brainium (retainer + success fee):{" "}
-                <strong>{usd0(brainiumFeeY1 + brainiumSuccessFee)}</strong>.
+                Total Y1 Brainium (retainer + success fee + comisión):{" "}
+                <strong>{usd0(brainiumTotalY1)}</strong> (incluye {usd0(brainiumRevShareY1)} de
+                rev-share).
               </div>
             </div>
           </div>
         </Card>
       </Section>
 
+      <Section title="Dashboard de equipo (selección actual)">
+        <Card>
+          {activeTeamMembers.length > 0 ? (
+            <Table headers={teamDashboardHeaders} rows={teamDashboardRows} />
+          ) : (
+            <div style={styles.controlHelp}>Activa al menos un miembro para ver la tabla.</div>
+          )}
+        </Card>
+      </Section>
+
       {/* P&L */}
       <Section title="P&L 36 meses (escenario base)">
-        <div style={styles.grid2}>
-          <Card>
-            <h3 style={styles.h3}>Resumen rápido</h3>
-            <ul style={styles.ul}>
-              <li>GMV Y1: {usd0(y1.gmv)}</li>
-              <li>GMV Y2: {usd0(y2.gmv)}</li>
-              <li>GMV Y3: {usd0(y3.gmv)}</li>
-              <li>Utilidad neta Y3: {usd0(y3.net)}</li>
-            </ul>
-          </Card>
-          <Card>
-            <Table headers={pnlHeaders} rows={pnlRows} />
-          </Card>
-        </div>
+        <Card>
+          <Table headers={pnlHeaders} rows={pnlRows} />
+        </Card>
       </Section>
 
       {/* Sensibilidad */}
@@ -883,10 +1031,6 @@ const InvestorModelView: React.FC = () => {
               <li>
                 Punto de caja positiva: alrededor de mes{" "}
                 <strong>{monthOfTurnPositive}</strong>.
-              </li>
-              <li>
-                Meta prudente de seed de referencia:{" "}
-                <strong>{usd0(SEED_TARGET)}</strong>.
               </li>
             </ul>
           </Card>
@@ -1406,11 +1550,35 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#6b7280",
     marginTop: 2,
   },
-  toggleRow: {
+  teamGrid: {
+    display: "grid",
+    gap: 10,
+  },
+  teamMemberCard: {
+    border: "1px solid #e5e7eb",
+    borderRadius: 8,
+    padding: 10,
     display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    background: "#f9fafb",
+  },
+  teamMemberHeader: {
+    display: "flex",
+    justifyContent: "space-between",
     alignItems: "center",
     gap: 8,
-    marginTop: 4,
+  },
+  teamToggleLabel: {
+    fontSize: 11,
+    color: "#111827",
+    display: "flex",
+    alignItems: "center",
+  },
+  teamFieldsGrid: {
+    display: "grid",
+    gap: 8,
+    gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
   },
 };
 
