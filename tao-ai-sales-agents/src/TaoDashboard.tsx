@@ -435,7 +435,7 @@ const InvestorModelView: React.FC = () => {
   const [y1, y2, y3] = basePnL;
 
   /** ---- SENSIBILIDAD Y3 ---- */
-  const sensitivity: Sensitivity[] = [
+  const baseSensitivity: Sensitivity[] = [
     {
       name: "Downside",
       closings: 450,
@@ -481,7 +481,9 @@ const InvestorModelView: React.FC = () => {
       net: 0,
       netMarginOnRev: 0,
     },
-  ].map((s) => {
+  ];
+
+  const sensitivity: Sensitivity[] = baseSensitivity.map((s) => {
     const gmv = s.closings * asp;
     const leads = Math.round(s.closings / Math.max(s.closeRate, 0.0001));
     const media = Math.round(leads * s.cpl);
