@@ -695,6 +695,13 @@ const InvestorModelView: React.FC = () => {
           Ajusta cierres por año, supuestos comerciales, Brainium y equipo. El modelo recalcula GMV,
           comisiones, márgenes y caja en tiempo real.
         </div>
+        <div style={{ ...styles.headNote, color: "#4b5563" }}>
+          Los supuestos se calculan así: ASP es el ticket medio elegido; captura mezclada aplica ese %
+          sobre el GMV (cierres × ASP) como ingreso por comisión; la tasa de cierre es el porcentaje de
+          leads que se convierten en cierres y el CPL es el costo unitario de cada lead (leads =
+          cierres / tasa de cierre y medios = leads × CPL); los sueldos anuales Y1 suman los salarios
+          mensuales activos del equipo en Y1 × 12.
+        </div>
       </header>
 
       {/* Controles */}
