@@ -94,7 +94,6 @@ const BASE_CLOSINGS = [180, 400, 650];
 const BRAINIUM_FEE_MONTHS = 6;
 
 // Equipo
-const TEAM_ROLES: TeamRole[] = ["GM", "Sr Analyst", "Jr Analyst"];
 const HIRE_YEARS: HireYear[] = ["Y0", "Y1", "Y2", "Y3"];
 const HIRE_YEAR_ORDER: Record<HireYear, number> = {
   Y0: 0,
@@ -103,53 +102,27 @@ const HIRE_YEAR_ORDER: Record<HireYear, number> = {
   Y3: 3,
 };
 
-const DEFAULT_TEAM: TeamMember[] = [
-  {
-    id: "gm",
-    name: "Luis (GM)",
-    title: "General Manager",
-    role: "GM",
-    monthlySalary: GM_MONTHLY_SALARY,
-    hireYear: "Y1",
-    active: true,
-  },
-  {
-    id: "sr-analyst",
-    name: "AI Sr Analyst",
-    title: "Sr Analyst",
-    role: "Sr Analyst",
-    monthlySalary: AI_SR_MONTHLY_SALARY,
-    hireYear: "Y1",
-    active: true,
-  },
-  {
-    id: "jr-analyst",
-    name: "AI Specialist",
-    title: "Jr Analyst",
-    role: "Jr Analyst",
-    monthlySalary: AI_SPEC_MONTHLY_SALARY,
-    hireYear: "Y1",
-    active: true,
-  },
-  {
-    id: "fourth",
-    name: "4º empleado",
-    title: "TBD",
-    role: "Jr Analyst",
-    monthlySalary: 2_500,
-    hireYear: "Y1",
-    active: false,
-  },
-  {
-    id: "fifth",
-    name: "5º empleado",
-    title: "TBD",
-    role: "Jr Analyst",
-    monthlySalary: 2_500,
-    hireYear: "Y1",
-    active: false,
-  },
-];
+const GM_MEMBER: TeamMember = {
+  id: "gm",
+  name: "Luis (GM)",
+  title: "General Manager",
+  role: "GM",
+  monthlySalary: GM_MONTHLY_SALARY,
+  hireYear: "Y1",
+  active: true,
+};
+
+const DEFAULT_SR_HIRES: HireYear[] = ["Y1"];
+const DEFAULT_JR_HIRES: HireYear[] = ["Y1"];
+const MAX_HIRES_PER_ROLE = 3;
+
+const ROLE_DESCRIPTIONS: Record<TeamRole, string> = {
+  GM: "Dirige estrategia, alianzas y coordinación con desarrolladores y brokers.",
+  "Sr Analyst":
+    "Lidera el motor de demanda y analítica, optimiza procesos y da seguimiento a cierres.",
+  "Jr Analyst":
+    "Opera seguimiento diario a leads, agenda visitas y apoya a los agentes de IA.",
+};
 
 // Caja
 const MONTHS_PRE_SALES = 3;
@@ -411,8 +384,11 @@ const InvestorModelView: React.FC = () => {
     DEFAULT_BRAINIUM_REVSHARE_PCT
   );
 
-  // Equipo completo
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([...DEFAULT_TEAM]);
+  // Equipo (GM fijo + analistas configurables)
+  const [srAnalystHires, setSrAnalystHires] = useState<HireYear[]>([...DEFAULT_SR_HIRES]);
+  const [jrAnalystHires, setJrAnalystHires] = useState<HireYear[]>([...DEFAULT_JR_HIRES]);
+  const [srAnalystSalary, setSrAnalystSalary] = useState<number>(AI_SR_MONTHLY_SALARY);
+  const [jrAnalystSalary, setJrAnalystSalary] = useState<number>(AI_SPEC_MONTHLY_SALARY);
 
   // Reset
   const handleReset = () => {
@@ -429,13 +405,40 @@ const InvestorModelView: React.FC = () => {
     setBrainiumSuccessFee(DEFAULT_BRAINIUM_SUCCESS_FEE);
     setBrainiumRevSharePct(DEFAULT_BRAINIUM_REVSHARE_PCT);
 
-    setTeamMembers([...DEFAULT_TEAM]);
+    setSrAnalystHires([...DEFAULT_SR_HIRES]);
+    setJrAnalystHires([...DEFAULT_JR_HIRES]);
+    setSrAnalystSalary(AI_SR_MONTHLY_SALARY);
+    setJrAnalystSalary(AI_SPEC_MONTHLY_SALARY);
   };
 
-  const updateTeamMember = (id: string, updates: Partial<TeamMember>) => {
-    setTeamMembers((prev) =>
-      prev.map((member) => (member.id === id ? { ...member, ...updates } : member))
-    );
+  const adjustHireCount = (hires: HireYear[], count: number) => {
+    if (count < hires.length) return hires.slice(0, count);
+    const lastYear = hires[hires.length - 1] || "Y1";
+    return [...hires, ...Array.from({ length: count - hires.length }, () => lastYear)];
+  };
+
+  const buildTeamMembers = (): TeamMember[] => {
+    const srMembers: TeamMember[] = srAnalystHires.map((year, idx) => ({
+      id: `sr-analyst-${idx + 1}`,
+      name: `Sr Analyst ${idx + 1}`,
+      title: "Sr Analyst",
+      role: "Sr Analyst",
+      monthlySalary: srAnalystSalary,
+      hireYear: year,
+      active: true,
+    }));
+
+    const jrMembers: TeamMember[] = jrAnalystHires.map((year, idx) => ({
+      id: `jr-analyst-${idx + 1}`,
+      name: `Jr Analyst ${idx + 1}`,
+      title: "Jr Analyst",
+      role: "Jr Analyst",
+      monthlySalary: jrAnalystSalary,
+      hireYear: year,
+      active: true,
+    }));
+
+    return [GM_MEMBER, ...srMembers, ...jrMembers];
   };
 
   // Derivados
@@ -447,6 +450,7 @@ const InvestorModelView: React.FC = () => {
   const brainiumFeeY1 = brainiumMonthlyFee * BRAINIUM_FEE_MONTHS;
   const overheadY1 = OVERHEAD_ANNUAL + brainiumFeeY1 + brainiumSuccessFee;
 
+  const teamMembers = buildTeamMembers();
   const activeTeamMembers = teamMembers.filter((member) => member.active);
 
   const monthlySalariesByYear = [1, 2, 3].map((yearNumber) =>
@@ -504,11 +508,11 @@ const InvestorModelView: React.FC = () => {
   const brainiumTotalY1 = brainiumFeeY1 + brainiumSuccessFee + brainiumRevShareY1;
 
   const teamDashboardRows = activeTeamMembers.map((member) => [
-    member.name || member.title,
-    member.title,
+    member.name,
     member.role,
     member.hireYear,
     usd0(member.monthlySalary),
+    ROLE_DESCRIPTIONS[member.role],
   ]);
 
   /** ---- SENSIBILIDAD Y3 ---- */
@@ -667,10 +671,10 @@ const InvestorModelView: React.FC = () => {
 
   const teamDashboardHeaders = [
     "Nombre",
-    "Título",
     "Rol",
     "Año de contratación",
     "Sueldo (USD/mes)",
+    "Funciones principales",
   ];
 
   return (
@@ -820,104 +824,129 @@ const InvestorModelView: React.FC = () => {
               </div>
 
               <div style={styles.teamGrid}>
-                {teamMembers.map((member) => (
-                  <div key={member.id} style={styles.teamMemberCard}>
-                    <div style={styles.teamMemberHeader}>
-                      <div style={{ fontWeight: 600 }}>{member.name || "Miembro"}</div>
-                      <label style={styles.teamToggleLabel}>
-                        <input
-                          type="checkbox"
-                          checked={member.active}
-                          onChange={(e) =>
-                            updateTeamMember(member.id, { active: e.target.checked })
-                          }
-                          style={{ marginRight: 6 }}
-                        />
-                        Activo
-                      </label>
-                    </div>
-
-                    <div style={styles.teamFieldsGrid}>
-                      <div style={styles.controlField}>
-                        <label style={styles.controlFieldLabel}>Nombre</label>
-                        <input
-                          type="text"
-                          value={member.name}
-                          onChange={(e) =>
-                            updateTeamMember(member.id, { name: e.target.value })
-                          }
-                          style={styles.controlInput}
-                        />
-                      </div>
-
-                      <div style={styles.controlField}>
-                        <label style={styles.controlFieldLabel}>Título</label>
-                        <input
-                          type="text"
-                          value={member.title}
-                          onChange={(e) =>
-                            updateTeamMember(member.id, { title: e.target.value })
-                          }
-                          style={styles.controlInput}
-                        />
-                      </div>
-
-                      <div style={styles.controlField}>
-                        <label style={styles.controlFieldLabel}>Rol</label>
-                        <select
-                          value={member.role}
-                          onChange={(e) =>
-                            updateTeamMember(member.id, {
-                              role: e.target.value as TeamRole,
-                            })
-                          }
-                          style={styles.controlInput}
-                        >
-                          {TEAM_ROLES.map((role) => (
-                            <option key={role} value={role}>
-                              {role}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div style={styles.controlField}>
-                        <label style={styles.controlFieldLabel}>Sueldo (USD/mes)</label>
-                        <input
-                          type="number"
-                          min={0}
-                          step={250}
-                          value={member.monthlySalary}
-                          onChange={(e) =>
-                            updateTeamMember(member.id, {
-                              monthlySalary: Number(e.target.value) || 0,
-                            })
-                          }
-                          style={styles.controlInput}
-                        />
-                      </div>
-
-                      <div style={styles.controlField}>
-                        <label style={styles.controlFieldLabel}>Año de contratación</label>
-                        <select
-                          value={member.hireYear}
-                          onChange={(e) =>
-                            updateTeamMember(member.id, {
-                              hireYear: e.target.value as HireYear,
-                            })
-                          }
-                          style={styles.controlInput}
-                        >
-                          {HIRE_YEARS.map((year) => (
-                            <option key={year} value={year}>
-                              {year}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
+                <div style={styles.teamMemberCard}>
+                  <div style={styles.teamMemberHeader}>
+                    <div style={{ fontWeight: 600 }}>Sr. Analyst</div>
                   </div>
-                ))}
+
+                  <div style={styles.teamFieldsGrid}>
+                    <div style={styles.controlField}>
+                      <label style={styles.controlFieldLabel}>Sueldo (USD/mes)</label>
+                      <input
+                        type="number"
+                        min={0}
+                        step={250}
+                        value={srAnalystSalary}
+                        onChange={(e) => setSrAnalystSalary(Number(e.target.value) || 0)}
+                        style={styles.controlInput}
+                      />
+                    </div>
+
+                    <div style={styles.controlField}>
+                      <label style={styles.controlFieldLabel}>¿Cuántos contratas?</label>
+                      <select
+                        value={srAnalystHires.length}
+                        onChange={(e) =>
+                          setSrAnalystHires((prev) =>
+                            adjustHireCount(prev, Number(e.target.value) || 0)
+                          )
+                        }
+                        style={styles.controlInput}
+                      >
+                        {Array.from({ length: MAX_HIRES_PER_ROLE + 1 }, (_, i) => i).map((count) => (
+                          <option key={count} value={count}>
+                            {count}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {srAnalystHires.map((year, idx) => (
+                      <div key={idx} style={styles.controlField}>
+                        <label style={styles.controlFieldLabel}>{`Año de contratación ${idx + 1}`}</label>
+                        <select
+                          value={year}
+                          onChange={(e) =>
+                            setSrAnalystHires((prev) => {
+                              const next = [...prev];
+                              next[idx] = e.target.value as HireYear;
+                              return next;
+                            })
+                          }
+                          style={styles.controlInput}
+                        >
+                          {HIRE_YEARS.map((y) => (
+                            <option key={y} value={y}>
+                              {y}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={styles.teamMemberCard}>
+                  <div style={styles.teamMemberHeader}>
+                    <div style={{ fontWeight: 600 }}>Jr. Analyst</div>
+                  </div>
+
+                  <div style={styles.teamFieldsGrid}>
+                    <div style={styles.controlField}>
+                      <label style={styles.controlFieldLabel}>Sueldo (USD/mes)</label>
+                      <input
+                        type="number"
+                        min={0}
+                        step={250}
+                        value={jrAnalystSalary}
+                        onChange={(e) => setJrAnalystSalary(Number(e.target.value) || 0)}
+                        style={styles.controlInput}
+                      />
+                    </div>
+
+                    <div style={styles.controlField}>
+                      <label style={styles.controlFieldLabel}>¿Cuántos contratas?</label>
+                      <select
+                        value={jrAnalystHires.length}
+                        onChange={(e) =>
+                          setJrAnalystHires((prev) =>
+                            adjustHireCount(prev, Number(e.target.value) || 0)
+                          )
+                        }
+                        style={styles.controlInput}
+                      >
+                        {Array.from({ length: MAX_HIRES_PER_ROLE + 1 }, (_, i) => i).map((count) => (
+                          <option key={count} value={count}>
+                            {count}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {jrAnalystHires.map((year, idx) => (
+                      <div key={idx} style={styles.controlField}>
+                        <label style={styles.controlFieldLabel}>{`Año de contratación ${idx + 1}`}</label>
+                        <select
+                          value={year}
+                          onChange={(e) =>
+                            setJrAnalystHires((prev) => {
+                              const next = [...prev];
+                              next[idx] = e.target.value as HireYear;
+                              return next;
+                            })
+                          }
+                          style={styles.controlInput}
+                        >
+                          {HIRE_YEARS.map((y) => (
+                            <option key={y} value={y}>
+                              {y}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               <div style={styles.controlHelp}>
