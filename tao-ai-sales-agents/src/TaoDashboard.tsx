@@ -504,8 +504,15 @@ const InvestorModelView: React.FC = () => {
 
   const [y1] = basePnL;
 
-  const brainiumRevShareY1 = y1.commissionRevenue * brainiumRevShareRate;
+  const brainiumRevShareByYear = basePnL.map(
+    (year) => year.commissionRevenue * brainiumRevShareRate
+  );
+  const [brainiumRevShareY1, brainiumRevShareY2, brainiumRevShareY3] =
+    brainiumRevShareByYear;
+
   const brainiumTotalY1 = brainiumFeeY1 + brainiumSuccessFee + brainiumRevShareY1;
+  const brainiumTotalY2 = brainiumRevShareY2;
+  const brainiumTotalY3 = brainiumRevShareY3;
 
   const teamDashboardRows = activeTeamMembers.map((member) => [
     member.name,
@@ -1036,9 +1043,10 @@ const InvestorModelView: React.FC = () => {
               </div>
 
               <div style={styles.controlHelp}>
-                Total Y1 Brainium (retainer + success fee + comisión):{" "}
-                <strong>{usd0(brainiumTotalY1)}</strong> (incluye {usd0(brainiumRevShareY1)} de
-                rev-share).
+                Asumimos que el % de comisión aplica a los primeros 3 años. Totales Brainium
+                (retainer + success fee + rev-share): Y1 <strong>{usd0(brainiumTotalY1)}</strong> ·
+                Y2 <strong>{usd0(brainiumTotalY2)}</strong> · Y3 <strong>{usd0(brainiumTotalY3)}</strong>
+                .
               </div>
             </div>
           </div>
