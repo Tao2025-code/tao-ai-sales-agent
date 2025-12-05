@@ -622,7 +622,11 @@ const InvestorModelView: React.FC = () => {
     <div style={styles.wrap}>
       {/* Header */}
       <header style={styles.header}>
-        <h1 style={styles.h1}>Vista para Inversionistas — Modelo financiero</h1>
+        <h1 style={styles.h1}>TAO AI Sales Agents — Investor Dashboard</h1>
+        <div style={{ ...styles.headNote, marginTop: 6 }}>
+          AI-first sales engine converting international demand for TAO land and condos into
+          high-margin commissions, launching in Riviera Maya and expanding to Baja California.
+        </div>
         <div style={styles.headStats}>
           <KeyStat label="ASP" value={usd0(asp)} />
           <KeyStat label="Captura mezclada" value={pct1(capture)} />
