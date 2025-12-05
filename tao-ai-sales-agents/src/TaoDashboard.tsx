@@ -1270,42 +1270,118 @@ const InvestorNarrativeView: React.FC = () => {
                 depender de horarios.
               </p>
               <p style={styles.p}>
-                Se integra con los canales de TAO (web, WhatsApp, email) y opera sobre datos de
-                inventario para priorizar a quién contactar, qué producto sugerir y cuándo escalar a
-                un humano.
+                Opera sobre canales de TAO (web, WhatsApp, email) y datos de inventario en vivo para
+                priorizar qué producto sugerir y cuándo escalar a un humano.
               </p>
-              <ul style={styles.ul}>
-                <li>Calificar leads con preguntas dinámicas y scoring automático.</li>
-                <li>Responder dudas frecuentes y enviar fichas técnicas en WhatsApp/email.</li>
-                <li>Proponer inventario relevante y agendar tours virtuales o presenciales.</li>
-                <li>Enviar recordatorios, follow-ups y recopilar documentos clave.</li>
-                <li>Escalar al broker correcto cuando el lead está listo para cerrar.</li>
-              </ul>
             </Card>
+
+            <div style={{ ...styles.grid2, marginTop: 12 }}>
+              <Card style={styles.agentCard}>
+                <div style={styles.agentPill}>Agente 1</div>
+                <h3 style={styles.agentTitle}>Captura y calificación 24/7</h3>
+                <p style={styles.agentText}>
+                  Monitorea canales, detecta idioma, valida identidad y clasifica la intención en
+                  segundos.
+                </p>
+                <ul style={styles.ul}> 
+                  <li>Hace preguntas dinámicas (presupuesto, fechas, ubicación de interés).</li>
+                  <li>Scorea al lead según señales de compra y comportamiento previo.</li>
+                  <li>Sincroniza con CRM para evitar duplicados y perder contexto.</li>
+                </ul>
+              </Card>
+
+              <Card style={styles.agentCard}>
+                <div style={styles.agentPill}>Agente 2</div>
+                <h3 style={styles.agentTitle}>Experiencia y producto</h3>
+                <p style={styles.agentText}>
+                  Recomienda inventario y hace que el lead visualice la compra con recursos
+                  interactivos.
+                </p>
+                <ul style={styles.ul}> 
+                  <li>Entrega fichas técnicas, renders y mapas 3D con disponibilidad en tiempo real.</li>
+                  <li>Propone 2–3 unidades relevantes y agenda tours virtuales o presenciales.</li>
+                  <li>Responde dudas de HOA, financiamiento, impuestos y estilo de vida.</li>
+                </ul>
+              </Card>
+
+              <Card style={styles.agentCard}>
+                <div style={styles.agentPill}>Agente 3</div>
+                <h3 style={styles.agentTitle}>Negociación y documentos</h3>
+                <p style={styles.agentText}>
+                  Reduce fricción: recoge evidencias, arma ofertas y muestra el plan financiero
+                  completo.
+                </p>
+                <ul style={styles.ul}> 
+                  <li>Recopila ID, proof-of-funds y preferencias para prellenar la oferta.</li>
+                  <li>Genera calendario de pagos con HOA, impuestos y notas notariales.</li>
+                  <li>Escala al broker adecuado con brief de 1 página listo para la llamada.</li>
+                </ul>
+              </Card>
+
+              <Card style={styles.agentCard}>
+                <div style={styles.agentPill}>Agente 4</div>
+                <h3 style={styles.agentTitle}>Seguimiento y cierre asistido</h3>
+                <p style={styles.agentText}>
+                  Mantiene el ritmo hasta el cierre y actualiza a todos los involucrados en tiempo
+                  real.
+                </p>
+                <ul style={styles.ul}> 
+                  <li>Envia recordatorios, comparativas y nudges según actividad del lead.</li>
+                  <li>Coordina agenda entre comprador, broker y notaría; confirma tours y firmas.</li>
+                  <li>Reporta estado en el CRM y protege el crédito de venta para TAO.</li>
+                </ul>
+              </Card>
+            </div>
           </Section>
 
           {/* Ejemplos */}
           <Section title="Ejemplos de Agentes de Ventas de IA desplegados (experiencia del comprador)">
             <div style={styles.grid3}>
-              <Card>
+              <Card style={styles.exampleCard}>
+                <div style={styles.exampleStep}>Paso 1</div>
                 <p style={styles.pSmall}>
-                  <strong>Caso 1: Comprador de EE.UU. interesado en condo.</strong> El agente recibe
-                  el lead por WhatsApp, confirma presupuesto y fechas, comparte dos unidades
-                  sugeridas con fotos y video, y agenda un tour virtual el mismo día.
+                  <strong>Calibra presupuesto y fechas.</strong> «Hola Sarah, con base en tu
+                  presupuesto y fechas, seleccioné dos condos en la playa y uno que te encajan bien.
+                  ¿Te gusta ver el unit tour el jueves o viernes?»
                 </p>
               </Card>
-              <Card>
+              <Card style={styles.exampleCard}>
+                <div style={styles.exampleStep}>Paso 2</div>
                 <p style={styles.pSmall}>
-                  <strong>Caso 2: Comprador europeo buscando terreno.</strong> El agente envía un mapa
-                  con lotes disponibles, explica reglas de construcción y propone una llamada con un
-                  broker para aclarar temas legales y fiscales.
+                  <strong>Mapa interactivo y tiempos.</strong> Envía un mapa 3D con la unidad marcada,
+                  tiempos de caminata a playa/restaurantes y agenda una visita guiada con un clic.
                 </p>
               </Card>
-              <Card>
+              <Card style={styles.exampleCard}>
+                <div style={styles.exampleStep}>Paso 3</div>
                 <p style={styles.pSmall}>
-                  <strong>Caso 3: Lead que llega por referidos.</strong> El agente valida la
-                  recomendación, recopila intereses y timeline, envía un brochure personalizado y
-                  coordina una videollamada entre el lead y el broker que originó el referido.
+                  <strong>Explica costos y pagos.</strong> Comparte un breakdown en lenguaje simple
+                  sobre HOA, reglas de uso y calendario de pagos mensuales/anuales para dar
+                  previsibilidad.
+                </p>
+              </Card>
+              <Card style={styles.exampleCard}>
+                <div style={styles.exampleStep}>Paso 4</div>
+                <p style={styles.pSmall}>
+                  <strong>Reúne documentos y arma oferta.</strong> Solicita ID y proof-of-funds,
+                  valida nombres legales y prellena la oferta con los datos del comprador y la unidad
+                  preferida.
+                </p>
+              </Card>
+              <Card style={styles.exampleCard}>
+                <div style={styles.exampleStep}>Paso 5</div>
+                <p style={styles.pSmall}>
+                  <strong>Handoff con contexto.</strong> Cuando el lead está calificado, envía al
+                  broker un brief de 1 página con historial de interacciones, intereses y objeciones
+                  clave para acelerar el cierre.
+                </p>
+              </Card>
+              <Card style={styles.exampleCard}>
+                <div style={styles.exampleStep}>Paso 6</div>
+                <p style={styles.pSmall}>
+                  <strong>Nurturing y urgencia.</strong> Mantiene vivos a los prospectos con updates de
+                  obra, alertas de «últimas 3 unidades» y recordatorios de expiración de ofertas,
+                  activando el siguiente paso con un botón.
                 </p>
               </Card>
             </div>
@@ -1436,6 +1512,35 @@ const styles: Record<string, React.CSSProperties> = {
     display: "grid",
     gap: 16,
     gridTemplateColumns: "repeat(3, 1fr)",
+  },
+  agentCard: {
+    background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+    border: "1px solid #e5e7eb",
+    boxShadow: "0 6px 16px rgba(0,0,0,0.04)",
+  },
+  agentPill: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "4px 10px",
+    borderRadius: 999,
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: 0.2,
+    background: "#e0f2fe",
+    color: "#075985",
+    marginBottom: 6,
+  },
+  agentTitle: {
+    fontSize: 15,
+    margin: "0 0 6px",
+    fontWeight: 700,
+    color: "#0f172a",
+  },
+  agentText: {
+    margin: "0 0 8px",
+    fontSize: 13,
+    color: "#334155",
   },
   card: {
     background: "#ffffff",
@@ -1600,6 +1705,26 @@ const styles: Record<string, React.CSSProperties> = {
     display: "grid",
     gap: 8,
     gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+  },
+  exampleCard: {
+    background: "#ffffff",
+    border: "1px solid #e5e7eb",
+    borderRadius: 12,
+    padding: 16,
+    boxShadow: "0 8px 20px rgba(0,0,0,0.04)",
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+  },
+  exampleStep: {
+    alignSelf: "flex-start",
+    padding: "4px 10px",
+    borderRadius: 999,
+    background: "#eef2ff",
+    color: "#4338ca",
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: 0.3,
   },
 };
 
