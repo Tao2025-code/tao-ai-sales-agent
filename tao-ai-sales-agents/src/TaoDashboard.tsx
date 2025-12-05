@@ -684,6 +684,27 @@ const InvestorModelView: React.FC = () => {
         </div>
       </header>
 
+      <Section title="Cómo leer este modelo">
+        <ul className={styles.ul as unknown as string} style={styles.ul}>
+          <li>
+            Ajusta los supuestos comerciales, de cierres y de equipo en los controles para ver los
+            impactos en GMV, ingresos y caja en tiempo real.
+          </li>
+          <li>
+            Compara la tabla P&L base y la tabla de sensibilidad para ver cómo cambian márgenes,
+            salarios y utilidades netas por escenario.
+          </li>
+          <li>
+            El flujo de caja Y1 asume 3 meses sin ventas y 9 meses con cierres; la cifra de "mes
+            caja positiva" refleja cuándo el acumulado vuelve a cero.
+          </li>
+        </ul>
+        <p className={styles.pSmall as unknown as string} style={styles.pSmall}>
+          Este modelo es ilustrativo y depende de supuestos; no constituye una proyección
+          garantizada ni una oferta vinculante.
+        </p>
+      </Section>
+
       {/* Controles */}
       <Section title="Controles del modelo">
         <Card>
