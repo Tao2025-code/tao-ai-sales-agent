@@ -209,7 +209,7 @@ const CashChart: React.FC<{
  *  VISTA: MODELO FINANCIERO (Slide 1)
  *  --------------------------- */
 const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
-  const t = copy[language].model;
+  const t = copy[language].investorModelView;
   const isMobile = useIsMobile();
   // Defaults comerciales
   const DEFAULT_ASP = 225_000;
@@ -655,7 +655,9 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
               <div style={styles.controlLabel}>{t.controlGroups.commercial.closingsGroupTitle}</div>
 
               <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>Cierres Y1</label>
+                <label style={styles.controlFieldLabel}>
+                  {t.controlGroups.commercial.closingLabelY1}
+                </label>
                 <input
                   type="number"
                   min={0}
@@ -673,7 +675,9 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
               </div>
 
               <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>Cierres Y2</label>
+                <label style={styles.controlFieldLabel}>
+                  {t.controlGroups.commercial.closingLabelY2}
+                </label>
                 <input
                   type="number"
                   min={0}
@@ -691,7 +695,9 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
               </div>
 
               <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>Cierres Y3</label>
+                <label style={styles.controlFieldLabel}>
+                  {t.controlGroups.commercial.closingLabelY3}
+                </label>
                 <input
                   type="number"
                   min={0}
