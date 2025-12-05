@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Card, Section } from "../components/Layout";
 import { copy, Language } from "../copy";
+import { useIsMobile } from "../hooks/useIsMobile";
 import { styles } from "../styles";
 
 /** ---------------------------
@@ -11,9 +12,11 @@ const InvestorNarrativeView: React.FC<{ language: Language }> = ({ language }) =
     "narrativa"
   );
   const t = copy[language].narrative;
+  const isMobile = useIsMobile();
+  const wrapStyle = { ...styles.wrap, padding: isMobile ? "12px" : styles.wrap.padding };
 
   return (
-    <div data-language={language} style={styles.wrap}>
+    <div data-language={language} style={wrapStyle}>
       <header style={styles.header}>
         <h1 style={styles.h1}>{t.headerTitle}</h1>
       </header>

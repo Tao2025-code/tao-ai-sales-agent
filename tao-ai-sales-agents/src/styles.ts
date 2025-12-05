@@ -25,7 +25,7 @@ export const styles: Record<string, React.CSSProperties> = {
   },
   headNote: {
     marginTop: 8,
-    fontSize: 12,
+    fontSize: 13,
     color: "#4b5563",
     maxWidth: 900,
   },
@@ -83,7 +83,7 @@ export const styles: Record<string, React.CSSProperties> = {
     justifyContent: "center",
     padding: "4px 10px",
     borderRadius: 999,
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: 700,
     letterSpacing: 0.2,
     background: "#e0f2fe",
@@ -155,7 +155,7 @@ export const styles: Record<string, React.CSSProperties> = {
     fontWeight: 700,
   },
   keystatLabel: {
-    fontSize: 12,
+    fontSize: 13,
     color: "#6b7280",
   },
   table: {
@@ -163,6 +163,7 @@ export const styles: Record<string, React.CSSProperties> = {
     borderCollapse: "separate",
     borderSpacing: 0,
     fontSize: 13,
+    minWidth: 640,
   },
   languageToggle: {
     display: "inline-flex",
@@ -179,7 +180,7 @@ export const styles: Record<string, React.CSSProperties> = {
     borderRadius: 999,
     border: "none",
     background: "transparent",
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: 600,
     color: "#4b5563",
     cursor: "pointer",
@@ -224,7 +225,6 @@ export const styles: Record<string, React.CSSProperties> = {
   controlsGrid: {
     display: "grid",
     gap: 16,
-    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
   },
   controlGroup: {
     border: "1px solid #e5e7eb",
@@ -248,7 +248,7 @@ export const styles: Record<string, React.CSSProperties> = {
     marginTop: 4,
   },
   controlFieldLabel: {
-    fontSize: 11,
+    fontSize: 13,
     color: "#4b5563",
   },
   controlInput: {
@@ -258,7 +258,7 @@ export const styles: Record<string, React.CSSProperties> = {
     fontSize: 13,
   },
   controlHelp: {
-    fontSize: 11,
+    fontSize: 13,
     color: "#6b7280",
     marginTop: 2,
   },
@@ -282,7 +282,7 @@ export const styles: Record<string, React.CSSProperties> = {
     gap: 8,
   },
   teamToggleLabel: {
-    fontSize: 11,
+    fontSize: 13,
     color: "#111827",
     display: "flex",
     alignItems: "center",
@@ -308,7 +308,7 @@ export const styles: Record<string, React.CSSProperties> = {
     borderRadius: 999,
     background: "#eef2ff",
     color: "#4338ca",
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: 700,
     letterSpacing: 0.3,
   },

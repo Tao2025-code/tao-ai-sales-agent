@@ -1,7 +1,7 @@
 #root {
   margin: 0 auto;
   padding: 24px;
-  max-width: 1440px;
+  max-width: 1200px;
 }
 
 .app-shell {
@@ -9,4 +9,44 @@
   border-radius: 12px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   padding: 16px;
+}
+
+.table-wrapper {
+  width: 100%;
+}
+
+.controls-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.head-stats {
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  #root {
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .app-shell {
+    padding: 12px;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .table-wrapper table {
+    min-width: 520px;
+  }
+
+  .controls-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .head-stats {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }

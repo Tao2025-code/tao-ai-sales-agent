@@ -4,6 +4,7 @@ import { CashChart } from "../components/CashChart";
 import { KeyStat } from "../components/KeyStat";
 import { Table } from "../components/Table";
 import { copy, Language } from "../copy";
+import { useIsMobile } from "../hooks/useIsMobile";
 import { styles } from "../styles";
 import { pct1, usd0 } from "../utils";
 
@@ -209,6 +210,7 @@ const CashChart: React.FC<{
  *  --------------------------- */
 const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
   const t = copy[language].model;
+  const isMobile = useIsMobile();
   // Defaults comerciales
   const DEFAULT_ASP = 225_000;
   const DEFAULT_CAPTURE_PCT = 3.65;
@@ -521,13 +523,14 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
   ]);
 
   const teamDashboardHeaders = t.teamTableHeaders;
+  const wrapStyle = { ...styles.wrap, padding: isMobile ? "12px" : styles.wrap.padding };
 
   return (
-    <div data-language={language} style={styles.wrap}>
+    <div data-language={language} style={wrapStyle}>
       {/* Header */}
       <header style={styles.header}>
         <h1 style={styles.h1}>{t.headerTitle}</h1>
-        <div style={styles.headStats}>
+        <div className="head-stats" style={styles.headStats}>
           <KeyStat label={t.keyStats.closings} value={y1.closings.toLocaleString()} />
           <KeyStat label={t.keyStats.commissionRevenue} value={usd0(y1.commissionRevenue)} />
           <KeyStat label={t.keyStats.netIncome} value={usd0(y1.net)} />
@@ -537,7 +540,7 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
           />
         </div>
         <div style={{ ...styles.headNote, marginTop: 6 }}>{t.heroSubtitle}</div>
-        <div style={styles.headStats}>
+        <div className="head-stats" style={styles.headStats}>
           <KeyStat label={t.keyStats.asp} value={usd0(asp)} />
           <KeyStat label={t.keyStats.capture} value={pct1(capture)} />
           <KeyStat
@@ -587,7 +590,7 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
             </button>
           </div>
 
-          <div style={styles.controlsGrid}>
+          <div className="controls-grid" style={styles.controlsGrid}>
             {/* Supuestos comerciales */}
             <div style={styles.controlGroup}>
               <div style={styles.controlLabel}>{t.controlGroups.commercial.title}</div>
@@ -930,22 +933,24 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
       <Section title={t.sectionTitles.unitEconomics}>
         <Card>
           <h3 style={styles.h3}>{t.sectionTitles.unitEconomics}</h3>
-          <table style={styles.table}>
-            <tbody>
-              <tr>
-                <td style={styles.td}>{t.unitEconomicsRows.commission}</td>
-                <td style={styles.td}>{usd0(commissionPerClosing)}</td>
-              </tr>
-              <tr>
-                <td style={styles.td}>{t.unitEconomicsRows.acquisition}</td>
-                <td style={styles.td}>{usd0(mediaPerClosing)}</td>
-              </tr>
-              <tr>
-                <td style={styles.td}>{t.unitEconomicsRows.contribution}</td>
-                <td style={styles.td}>{usd0(netPerClosing)}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="table-wrapper" style={{ overflowX: "auto" }}>
+            <table style={styles.table}>
+              <tbody>
+                <tr>
+                  <td style={styles.td}>{t.unitEconomicsRows.commission}</td>
+                  <td style={styles.td}>{usd0(commissionPerClosing)}</td>
+                </tr>
+                <tr>
+                  <td style={styles.td}>{t.unitEconomicsRows.acquisition}</td>
+                  <td style={styles.td}>{usd0(mediaPerClosing)}</td>
+                </tr>
+                <tr>
+                  <td style={styles.td}>{t.unitEconomicsRows.contribution}</td>
+                  <td style={styles.td}>{usd0(netPerClosing)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </Card>
       </Section>
 

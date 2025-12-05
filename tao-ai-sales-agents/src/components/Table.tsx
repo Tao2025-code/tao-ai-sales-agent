@@ -7,7 +7,7 @@ type TableProps = {
 };
 
 export const Table: React.FC<TableProps> = ({ headers, rows }) => (
-  <div style={{ overflowX: "auto" }}>
+  <div className="table-wrapper" style={{ overflowX: "auto", width: "100%" }}>
     <table style={styles.table}>
       <thead>
         <tr>
