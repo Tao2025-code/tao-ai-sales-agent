@@ -52,12 +52,6 @@ type Sensitivity = {
   netMarginOnRev: number;
 };
 
-type FlowStep = {
-  step: string;
-  title: string;
-  text: string;
-};
-
 type TeamRole = "GM" | "Sr Analyst" | "Jr Analyst";
 type HireYear = "Y0" | "Y1" | "Y2" | "Y3";
 
@@ -127,66 +121,6 @@ const ROLE_DESCRIPTIONS: Record<TeamRole, string> = {
 // Caja
 const MONTHS_PRE_SALES = 3;
 const MONTHS_POST_SALES = 12 - MONTHS_PRE_SALES;
-
-/** ---------------------------
- *  DATOS NARRATIVA (Slide 2)
- *  --------------------------- */
-const flowSteps: FlowStep[] = [
-  {
-    step: "0",
-    title: "Cambio en la forma de obtener clientes",
-    text:
-      "Pasamos de depender del master broker (RETA / International Living) a un modelo activo que identifica millones de estadounidenses potenciales usando múltiples fuentes de datos para luego segmentarlos y perfilar el mejor momento y canal de contacto.",
-  },
-  {
-    step: "1",
-    title: "Lead capturado",
-    text:
-      "El lead llega desde web, WhatsApp, email, portales o brokers y se ingesta en tiempo real.",
-  },
-  {
-    step: "2",
-    title: "Perfil creado",
-    text:
-      "El sistema enriquece el lead con presupuesto, timing, preferencias, idioma e historial con TAO.",
-  },
-  {
-    step: "3",
-    title: "Scoreo y segmentación",
-    text:
-      "La IA puntúa intención y ventana de compra, segmenta por producto (condo vs tierra) y prioriza seguimiento.",
-  },
-  {
-    step: "4",
-    title: "Chat concierge",
-    text:
-      "Agente concierge bilingüe responde en WhatsApp/email y comparte media, mapas y FAQs.",
-  },
-  {
-    step: "5",
-    title: "Match de unidades",
-    text:
-      "Agente matcher propone 2–3 unidades de inventario en tiempo real y ajusta según la reacción del cliente.",
-  },
-  {
-    step: "6",
-    title: "Agendado de visitas",
-    text:
-      "Agente de tours agenda visitas virtuales o presenciales y envía invitaciones, direcciones y recordatorios.",
-  },
-  {
-    step: "7",
-    title: "Finanzas y documentos",
-    text:
-      "Agente de finanzas/documentos explica esquemas de pago, recopila proof-of-funds y prellena la oferta.",
-  },
-  {
-    step: "8",
-    title: "Handoff a broker y cierre",
-    text:
-      "Cuando hay alta intención, el agente arma un brief de 1 página y deriva al broker correcto, mientras sigue nutriendo.",
-  },
-];
 
 /** ---------------------------
  *  COMPONENTES UI REUSABLES
@@ -1114,6 +1048,10 @@ const InvestorModelView: React.FC = () => {
  *  VISTA: NARRATIVA / STRATEGIA (Slide 2)
  *  --------------------------- */
 const InvestorNarrativeView: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<"narrativa" | "bigdata" | "agents">(
+    "narrativa"
+  );
+
   return (
     <div style={styles.wrap}>
       <header style={styles.header}>
@@ -1122,245 +1060,258 @@ const InvestorNarrativeView: React.FC = () => {
         </h1>
       </header>
 
-      {/* Resumen */}
-      <Section title="Resumen en una línea">
-        <Card>
-          <p style={styles.p}>
-            Construir una organización de ventas <strong>AI-first</strong>, ligera y enfocada en
-            datos, que use agentes de IA especializados y escalamiento a brokers para convertir la
-            demanda de compradores internacionales de tierra y condos TAO en{" "}
-            <strong>comisiones de alto margen</strong>.
-          </p>
-        </Card>
-      </Section>
+      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+        {([
+          { id: "narrativa", label: "Narrativa y Estrategia" },
+          { id: "bigdata", label: "Big Data" },
+          { id: "agents", label: "AI Sales Agents" },
+        ] as const).map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            style={{
+              padding: "8px 12px",
+              borderRadius: 999,
+              border: activeTab === tab.id ? "1px solid #2563eb" : "1px solid #e5e7eb",
+              background: activeTab === tab.id ? "#eff6ff" : "#ffffff",
+              color: activeTab === tab.id ? "#1d4ed8" : "#111827",
+              cursor: "pointer",
+              fontWeight: activeTab === tab.id ? 600 : 500,
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
-      {/* Problema */}
-      <Section title="Problema y por qué ahora">
-        <Card>
-          <ul style={styles.ul}>
-            <li>
-              Los compradores internacionales hacen muchas preguntas, en distintos husos horarios y
-              esperan respuestas instantáneas (WhatsApp, email, teléfono).
-            </li>
-            <li>
-              TAO tiene inventario, marca e interés entrante, pero necesita un motor de ventas
-              siempre encendido para subir conversión y acortar el tiempo de cierre.
-            </li>
-            <li>
-              La IA moderna puede calificar, nutrir y agendar visitas 24/7, escalando a humanos solo
-              cuando realmente se necesita para cerrar.
-            </li>
-          </ul>
-        </Card>
-      </Section>
+      {activeTab === "narrativa" && (
+        <>
+          {/* Resumen */}
+          <Section title="Resumen en una línea">
+            <Card>
+              <p style={styles.p}>
+                Construir una organización de ventas <strong>AI-first</strong>, ligera y enfocada en
+                datos, que use agentes de IA especializados y escalamiento a brokers para convertir
+                la demanda de compradores internacionales de tierra y condos TAO en{" "}
+                <strong>comisiones de alto margen</strong>.
+              </p>
+            </Card>
+          </Section>
 
-      {/* Producto y ventaja */}
-      <Section title="Producto y ventaja competitiva">
-        <div style={styles.grid2}>
-          <Card>
-            <h3 style={styles.h3}>Qué hacen los agentes</h3>
-            <ul style={styles.ul}>
-              <li>
-                Cambio en adquisición: dejamos de depender del master broker y construimos un motor
-                propio de demanda internacional.
-              </li>
-              <li>Concierge EN/ES en WhatsApp/email.</li>
-              <li>Matcher de inventario en tiempo real.</li>
-              <li>Agendado de tours virtuales/presenciales.</li>
-              <li>Agente de finanzas/documentos y prellenado de ofertas.</li>
-              <li>Handoff al broker con brief de 1 página.</li>
-            </ul>
-          </Card>
-          <Card>
-            <h3 style={styles.h3}>Por qué ganamos</h3>
-            <ul style={styles.ul}>
-              <li>Inventario TAO + marca + historial de leads propio.</li>
-              <li>Cobertura 24/7 bilingüe en WhatsApp, email y teléfono.</li>
-              <li>Monetización por lanes (listing-led, co-broke, referidos).</li>
-              <li>Pipeline completamente instrumentado y medible.</li>
-              <li>
-                Brainium (Dr. Roger Long) como consultor externo con fee mensual más success fee en
-                mes 7, alineado a resultados.
-              </li>
-            </ul>
-          </Card>
-        </div>
-      </Section>
+          {/* Problema */}
+          <Section title="Problema y por qué ahora">
+            <Card>
+              <p style={styles.p}>
+                El problema principal a resolver es cambiar el modelo de adquisición de clientes de:
+                «yo pongo publicidad para que me encuentren» a: «primero veo quién es un cliente
+                potencial para TAO y luego le doy el producto perfecto».
+              </p>
+              <h4 style={{ ...styles.h3, marginTop: 12 }}>La empresa sigue la siguiente lógica:</h4>
+              <ol style={styles.ol}>
+                <li>¿Quién es mi comprador?</li>
+                <li>¿Dónde está mi comprador?</li>
+                <li>¿Cómo lo contacto?</li>
+                <li>Match con mi producto perfecto.</li>
+              </ol>
+            </Card>
+          </Section>
 
-      {/* ESTRATEGIA BASE DE DATOS 500K+ */}
-      <Section title="Estrategia para construir una base de datos de 500,000+ compradores extranjeros">
-        <Card>
-          <h3 style={styles.h3}>1. Reactivar y segmentar la base actual (80,000 registros)</h3>
-          <ul style={styles.ul}>
-            <li>
-              <strong>Limpieza y enriquecimiento de datos:</strong> normalizar correos, teléfonos y
-              países; eliminar rebotes duros; enriquecer con datos externos (edad, ciudad, estado,
-              idioma, tipo de propiedad de interés cuando exista).
-            </li>
-            <li>
-              <strong>Etiquetado por intención y antigüedad:</strong> segmentar en cohortes 2013–
-              2016, 2017–2020, 2021–hoy; analizar aperturas de email, clics y visitas recientes para
-              detectar quién sigue activo.
-            </li>
-            <li>
-              <strong>Reactivación con agentes de IA:</strong> campañas de reactivación automatizadas
-              por email/WhatsApp que pregunten de forma conversacional si siguen interesados en
-              comprar en México, presupuesto, timing y producto preferido.
-            </li>
-            <li>
-              <strong>Match con productos futuros:</strong> mapear prospectos que mencionan Baja
-              California, invierno en EE. UU./Canadá o ticket 300–400k con productos como
-              MonteRocella y ranchos sustentables.
-            </li>
-          </ul>
-        </Card>
+          {/* Producto y ventaja */}
+          <Section title="Producto y ventaja competitiva">
+            <div style={styles.grid2}>
+              <Card>
+                <h3 style={styles.h3}>Qué hacen los agentes</h3>
+                <ul style={styles.ul}>
+                  <li>
+                    Cambio en adquisición: dejamos de depender del master broker y construimos un
+                    motor propio de demanda internacional.
+                  </li>
+                  <li>Concierge EN/ES en WhatsApp/email.</li>
+                  <li>Matcher de inventario en tiempo real.</li>
+                  <li>Agendado de tours virtuales/presenciales.</li>
+                  <li>Agente de finanzas/documentos y prellenado de ofertas.</li>
+                  <li>Handoff al broker con brief de 1 página.</li>
+                </ul>
+              </Card>
+              <Card>
+                <h3 style={styles.h3}>Por qué ganamos</h3>
+                <ul style={styles.ul}>
+                  <li>Inventario TAO + marca + historial de leads propio.</li>
+                  <li>Cobertura 24/7 bilingüe en WhatsApp, email y teléfono.</li>
+                  <li>Monetización por lanes (listing-led, co-broke, referidos).</li>
+                  <li>Pipeline completamente instrumentado y medible.</li>
+                  <li>
+                    Brainium (Dr. Roger Long) como consultor externo con fee mensual más success fee
+                    en mes 7, alineado a resultados.
+                  </li>
+                </ul>
+              </Card>
+            </div>
+          </Section>
 
-        <Card style={{ marginTop: 12 }}>
-          <h3 style={styles.h3}>
-            2. Adquisición activa de 300,000–500,000 nuevos prospectos extranjeros
-          </h3>
-          <ul style={styles.ul}>
-            <li>
-              <strong>Data partners y listas cualificadas:</strong> acuerdos con empresas que venden
-              datos de high-net-worth individuals y pre-retirados en EE. UU., Canadá y Europa
-              interesados en real estate internacional (similar a lo que hoy hace RETA, pero
-              desintermediado).
-            </li>
-            <li>
-              <strong>Audiencias por intención de compra:</strong> campañas pagadas segmentadas por:
-              búsqueda de “buy property in Mexico”, “Baja California ranch”, “condos in Rosarito /
-              Ensenada”, etc., cruzado con comportamientos de viaje en invierno.
-            </li>
-            <li>
-              <strong>Lookalikes de compradores TAO:</strong> usar la base de clientes actuales para
-              crear audiencias similares en Facebook/Instagram, Google y plataformas de native ads,
-              optimizando a leads con capacidad de pagar ~1,500 USD mensuales de hipoteca.
-            </li>
-            <li>
-              <strong>Canales orgánicos y comunidades:</strong> alianzas con newsletters y medios de
-              retiro/inversión (internacionales) para captar leads a cambio de comisiones por cierre,
-              reemplazando gradualmente el rol del master broker.
-            </li>
-            <li>
-              <strong>Top of funnel enfocado en Baja California:</strong> contenido educativo sobre
-              vivir el invierno en México, fiscalidad, financiamiento a 20–30 años y proyectos
-              sustentables, con CTA directo hacia los agentes de IA.
-            </li>
-          </ul>
-        </Card>
+          {/* Próximos pasos */}
+          <Section title="Próximos pasos">
+            <Card>
+              <ul style={styles.ul}>
+                <li>Definir métricas clave de conversión.</li>
+                <li>Diseñar experimento piloto con X leads.</li>
+                <li>Integrar datos históricos de TAO en el modelo.</li>
+                <li>Probar guiones y assets para WhatsApp/email.</li>
+                <li>Documentar aprendizajes en playbook comercial.</li>
+              </ul>
+            </Card>
+          </Section>
+        </>
+      )}
 
-        <Card style={{ marginTop: 12 }}>
-          <h3 style={styles.h3}>3. Segmentación por producto TAO y operación con equipo reducido</h3>
-          <ul style={styles.ul}>
-            <li>
-              <strong>Segmentos de producto:</strong> MonteRocella (condos 350–400k USD), ranchos
-              sustentables en Baja (2,500–10,000 m² con opción modular) y futuros desarrollos de
-              playa. Cada segmento tiene mensajes y flujos de agente distintos.
-            </li>
-            <li>
-              <strong>Segmentos de cliente:</strong> pre-jubilados de EE. UU./Canadá que huyen del
-              frío; inversores buscando cashflow en USD; nómadas digitales de alto ingreso; europeos
-              buscando residencia de invierno.
-            </li>
-            <li>
-              <strong>Operación con 3–5 personas:</strong> el equipo humano se enfoca en estrategia,
-              alianzas y cierres complejos; los agentes de IA hacen el 90% de calificación, nurturing
-              y agendado, permitiendo escalar a cientos de miles de leads sin crecer headcount.
-            </li>
-            <li>
-              <strong>Scoreo continuo:</strong> los leads se re-scorean dinámicamente según
-              comportamiento (aperturas, clics, respuestas al chat, visitas a landing de Baja) y se
-              pasan a brokers sólo cuando hay alta probabilidad de cierre.
-            </li>
-          </ul>
-        </Card>
-      </Section>
+      {activeTab === "bigdata" && (
+        <>
+          {/* ESTRATEGIA BASE DE DATOS 500K+ */}
+          <Section title="Estrategia para construir una base de datos de 500,000+ compradores extranjeros">
+            <Card>
+              <h3 style={styles.h3}>1. Reactivar y segmentar la base actual (80,000 registros)</h3>
+              <ul style={styles.ul}>
+                <li>
+                  <strong>Limpieza y enriquecimiento de datos:</strong> normalizar correos, teléfonos
+                  y países; eliminar rebotes duros; enriquecer con datos externos (edad, ciudad,
+                  estado, idioma, tipo de propiedad de interés cuando exista).
+                </li>
+                <li>
+                  <strong>Etiquetado por intención y antigüedad:</strong> segmentar en cohortes
+                  2013–2016, 2017–2020, 2021–hoy; analizar aperturas de email, clics y visitas
+                  recientes para detectar quién sigue activo.
+                </li>
+                <li>
+                  <strong>Reactivación con agentes de IA:</strong> campañas de reactivación
+                  automatizadas por email/WhatsApp que pregunten de forma conversacional si siguen
+                  interesados en comprar en México, presupuesto, timing y producto preferido.
+                </li>
+                <li>
+                  <strong>Match con productos futuros:</strong> mapear prospectos que mencionan Baja
+                  California, invierno en EE. UU./Canadá o ticket 300–400k con productos como
+                  MonteRocella y ranchos sustentables.
+                </li>
+              </ul>
+            </Card>
 
-      {/* Flujo del agente */}
-      <Section title="Cómo funciona el Agente de Ventas de IA">
-        <Card>
-          <div style={styles.flowGrid}>
-            {flowSteps.map((s) => (
-              <div key={s.step} style={styles.flowStep}>
-                <div style={styles.stepBadge}>{s.step}</div>
-                <div style={styles.flowTitle}>{s.title}</div>
-                <p style={styles.pSmall}>{s.text}</p>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </Section>
+            <Card style={{ marginTop: 12 }}>
+              <h3 style={styles.h3}>
+                2. Adquisición activa de 300,000–500,000 nuevos prospectos extranjeros
+              </h3>
+              <ul style={styles.ul}>
+                <li>
+                  <strong>Data partners y listas cualificadas:</strong> acuerdos con empresas que
+                  venden datos de high-net-worth individuals y pre-retirados en EE. UU., Canadá y
+                  Europa interesados en real estate internacional (similar a lo que hoy hace RETA,
+                  pero desintermediado).
+                </li>
+                <li>
+                  <strong>Audiencias por intención de compra:</strong> campañas pagadas segmentadas
+                  por: búsqueda de “buy property in Mexico”, “Baja California ranch”, “condos in
+                  Rosarito / Ensenada”, etc., cruzado con comportamientos de viaje en invierno.
+                </li>
+                <li>
+                  <strong>Lookalikes de compradores TAO:</strong> usar la base de clientes actuales
+                  para crear audiencias similares en Facebook/Instagram, Google y plataformas de
+                  native ads, optimizando a leads con capacidad de pagar ~1,500 USD mensuales de
+                  hipoteca.
+                </li>
+                <li>
+                  <strong>Canales orgánicos y comunidades:</strong> alianzas con newsletters y medios
+                  de retiro/inversión (internacionales) para captar leads a cambio de comisiones por
+                  cierre, reemplazando gradualmente el rol del master broker.
+                </li>
+                <li>
+                  <strong>Top of funnel enfocado en Baja California:</strong> contenido educativo
+                  sobre vivir el invierno en México, fiscalidad, financiamiento a 20–30 años y
+                  proyectos sustentables, con CTA directo hacia los agentes de IA.
+                </li>
+              </ul>
+            </Card>
 
-      {/* Ejemplos */}
-      <Section title="Ejemplos de Agentes de Ventas de IA desplegados (experiencia del comprador)">
-        <div style={styles.grid3}>
-          <Card>
-            <p style={styles.pSmall}>
-              "Hola Sarah, con base en tu presupuesto y fechas, seleccioné{" "}
-              <strong>dos condos</strong> y <strong>un lote</strong> que encajan bien. ¿Te gustaría
-              un tour virtual el <strong>jueves o viernes</strong>?"
-            </p>
-          </Card>
-          <Card>
-            <p style={styles.pSmall}>
-              Envía un <strong>mapa 3D interactivo</strong> con la unidad marcada, tiempo caminando a
-              la playa y amenidades cercanas.
-            </p>
-          </Card>
-          <Card>
-            <p style={styles.pSmall}>
-              Comparte una explicación en lenguaje simple sobre{" "}
-              <strong>calendario de pagos</strong>, HOA, yields de renta y escenarios de inversión.
-            </p>
-          </Card>
-          <Card>
-            <p style={styles.pSmall}>
-              Recopila documentos (ID, proof-of-funds) vía un enlace seguro y{" "}
-              <strong>prellena la oferta</strong>.
-            </p>
-          </Card>
-          <Card>
-            <p style={styles.pSmall}>
-              Cuando el lead está calificado, el agente avisa al broker con un{" "}
-              <strong>brief de 1 página</strong> y agenda una llamada humana.
-            </p>
-          </Card>
-          <Card>
-            <p style={styles.pSmall}>
-              Mantiene a los prospectos calientes con <strong>updates de obra</strong>, cambios de
-              precio y alertas de "últimas unidades" de forma automática.
-            </p>
-          </Card>
-        </div>
-      </Section>
+            <Card style={{ marginTop: 12 }}>
+              <h3 style={styles.h3}>3. Segmentación por producto TAO y operación con equipo reducido</h3>
+              <ul style={styles.ul}>
+                <li>
+                  <strong>Segmentos de producto:</strong> MonteRocella (condos 350–400k USD), ranchos
+                  sustentables en Baja (2,500–10,000 m² con opción modular) y futuros desarrollos de
+                  playa. Cada segmento tiene mensajes y flujos de agente distintos.
+                </li>
+                <li>
+                  <strong>Segmentos de cliente:</strong> pre-jubilados de EE. UU./Canadá que huyen del
+                  frío; inversores buscando cashflow en USD; nómadas digitales de alto ingreso;
+                  europeos buscando residencia de invierno.
+                </li>
+                <li>
+                  <strong>Operación con 3–5 personas:</strong> el equipo humano se enfoca en
+                  estrategia, alianzas y cierres complejos; los agentes de IA hacen el 90% de
+                  calificación, nurturing y agendado, permitiendo escalar a cientos de miles de leads
+                  sin crecer headcount.
+                </li>
+                <li>
+                  <strong>Scoreo continuo:</strong> los leads se re-scorean dinámicamente según
+                  comportamiento (aperturas, clics, respuestas al chat, visitas a landing de Baja) y
+                  se pasan a brokers sólo cuando hay alta probabilidad de cierre.
+                </li>
+              </ul>
+            </Card>
+          </Section>
+        </>
+      )}
 
-      {/* Próximos pasos */}
-      <Section title="Próximos pasos">
-        <Card>
-          <ol style={styles.ol}>
-            <li>
-              Congelar un escenario Base en el slide de modelo financiero (cierres Y1–Y3, ASP, CPL y
-              parámetros de Brainium).
-            </li>
-            <li>
-              Definir objetivos concretos para la base de datos: por ejemplo, 100k leads reactivados
-              + 300k nuevos en 24 meses, con cobertura mayoritaria en EE. UU. y Canadá.
-            </li>
-            <li>
-              Diseñar el plan de adquisición de datos (partners, campañas, contenido) y asignar
-              responsabilidades específicas al equipo de 3–5 personas.
-            </li>
-            <li>
-              Lanzar un piloto de 60–90 días en Baja California con agentes de IA activos en
-              WhatsApp/web y medir costo por lead, tasa de calificación y comisiones generadas.
-            </li>
-            <li>
-              Ajustar los agentes y la segmentación según resultados del piloto y documentar la
-              máquina para replicarla en otros desarrollos TAO.
-            </li>
-          </ol>
-        </Card>
-      </Section>
+      {activeTab === "agents" && (
+        <>
+          {/* Flujo del agente */}
+          <Section title="Cómo funciona el Agente de Ventas de IA">
+            <Card>
+              <p style={styles.p}>
+                Un agente de ventas de IA funciona como concierge bilingüe siempre disponible: recibe
+                leads, los perfila y envía respuestas personalizadas en cuestión de segundos, sin
+                depender de horarios.
+              </p>
+              <p style={styles.p}>
+                Se integra con los canales de TAO (web, WhatsApp, email) y opera sobre datos de
+                inventario para priorizar a quién contactar, qué producto sugerir y cuándo escalar a
+                un humano.
+              </p>
+              <ul style={styles.ul}>
+                <li>Calificar leads con preguntas dinámicas y scoring automático.</li>
+                <li>Responder dudas frecuentes y enviar fichas técnicas en WhatsApp/email.</li>
+                <li>Proponer inventario relevante y agendar tours virtuales o presenciales.</li>
+                <li>Enviar recordatorios, follow-ups y recopilar documentos clave.</li>
+                <li>Escalar al broker correcto cuando el lead está listo para cerrar.</li>
+              </ul>
+            </Card>
+          </Section>
+
+          {/* Ejemplos */}
+          <Section title="Ejemplos de Agentes de Ventas de IA desplegados (experiencia del comprador)">
+            <div style={styles.grid3}>
+              <Card>
+                <p style={styles.pSmall}>
+                  <strong>Caso 1: Comprador de EE.UU. interesado en condo.</strong> El agente recibe
+                  el lead por WhatsApp, confirma presupuesto y fechas, comparte dos unidades
+                  sugeridas con fotos y video, y agenda un tour virtual el mismo día.
+                </p>
+              </Card>
+              <Card>
+                <p style={styles.pSmall}>
+                  <strong>Caso 2: Comprador europeo buscando terreno.</strong> El agente envía un mapa
+                  con lotes disponibles, explica reglas de construcción y propone una llamada con un
+                  broker para aclarar temas legales y fiscales.
+                </p>
+              </Card>
+              <Card>
+                <p style={styles.pSmall}>
+                  <strong>Caso 3: Lead que llega por referidos.</strong> El agente valida la
+                  recomendación, recopila intereses y timeline, envía un brochure personalizado y
+                  coordina una videollamada entre el lead y el broker que originó el referido.
+                </p>
+              </Card>
+            </div>
+          </Section>
+        </>
+      )}
     </div>
   );
 };
