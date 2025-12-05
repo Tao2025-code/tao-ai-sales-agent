@@ -1,5 +1,414 @@
 import React, { useState } from "react";
 
+type Language = "es" | "en";
+
+const copy: Record<Language, any> = {
+  es: {
+    dashboardTitle: "TAO Investor Dashboard",
+    tabs: {
+      model: "Modelo financiero",
+      narrative: "Narrativa y estrategia",
+    },
+    model: {
+      headerTitle: "Vista para Inversionistas — Modelo financiero",
+      heroSubtitle:
+        "AI-first sales engine converting international demand for TAO land and condos into high-margin commissions, launching in Riviera Maya and expanding to Baja California.",
+      heroNote:
+        "Ajusta cierres por año, supuestos comerciales, Brainium y equipo. El modelo recalcula GMV, comisiones, márgenes y caja en tiempo real.",
+      glossaryTitle: "Justificación de valores iniciales.",
+      glossaryItems: [
+        "ASP (USD 225k): ticket medio histórico de ventas de tierra y condo en Riviera Maya (mix de unidades entre USD 180k–260k), consistente con el pipeline actual.",
+        "Captura mezclada (3.65%): promedio ponderado entre proyectos con comisión del 3% y desarrollos con estructura 4–5%, asumiendo 70% inventario directo y 30% co-broker.",
+        "Tasa de cierre (2%): ratio observado en campañas digitales pasadas (1.6%–2.2%) sobre leads calificados, conservador para un primer año con nuevos flujos de nurturing.",
+        "CPL mezclado (USD 30): mezcla de canales orgánicos y pagados (SEM, sociales y referidos) que han oscilado entre USD 18–40 por lead en pruebas recientes.",
+        "Cierres Y1/Y2/Y3 (180 / 400 / 650): deriva de la capacidad del equipo (2 analistas + brokers externos) y ramp-up trimestral: ~15 cierres mensuales promedio en Y1, duplicando productividad con mayor inventario y automatización en Y2–Y3.",
+      ],
+      metricsGlossary: [
+        "ASP: ticket medio por unidad vendida (USD) sobre el cual se calcula el GMV.",
+        "Captura mezclada: comisión promedio aplicada al GMV para estimar ingresos.",
+        "Tasa de cierre: porcentaje de leads calificados que terminan en un cierre.",
+        "CPL mezclado: costo promedio por lead considerando canales pagados y orgánicos.",
+        "Cierres Y1/Y2/Y3: metas de transacciones anuales que impulsan el GMV.",
+      ],
+      howToReadTitle: "Cómo leer este modelo",
+      howToReadPoints: [
+        "Ajusta los supuestos comerciales, de cierres y de equipo en los controles para ver los impactos en GMV, ingresos y caja en tiempo real.",
+        "Compara la tabla P&L base y la tabla de sensibilidad para ver cómo cambian márgenes, salarios y utilidades netas por escenario.",
+        "El flujo de caja Y1 asume 3 meses sin ventas y 9 meses con cierres; la cifra de \"mes caja positiva\" refleja cuándo el acumulado vuelve a cero.",
+      ],
+      howToReadDisclaimer:
+        "Este modelo es ilustrativo y depende de supuestos; no constituye una proyección garantizada ni una oferta vinculante.",
+      controlsTitle: "Controles del modelo",
+      controlsRealtimeNote: "Los cambios se aplican en tiempo real al P&L y a la caja.",
+      resetButton: "Restablecer valores iniciales",
+      controlGroups: {
+        commercial: {
+          title: "Supuestos comerciales",
+          aspLabel: "ASP (USD)",
+          aspHelp: "Ticket promedio por operación; USD 180k–260k es común para lotes y condos.",
+          captureLabel: "Captura mezclada (%)",
+          captureHelp:
+            "Mezcla ponderada de comisiones para estimar ingresos; 3%–5% es típico según inventario y acuerdos.",
+          closeRateLabel: "Tasa de cierre (%)",
+          closeRateHelp:
+            "Porcentaje de leads calificados que cierran; 1.5%–2.5% es coherente con funnels similares.",
+          cplLabel: "CPL mezclado (USD)",
+          cplHelp:
+            "Costo por lead promedio considerando canales pagados y orgánicos; USD 20–40 es rango de referencia.",
+          closingsLabel: "Cierres por año",
+          closingsGroupTitle: "Cierres esperados por año",
+          closingsHelp:
+            "Metas anuales de cierres que impulsan el GMV; puedes simular ramp-up o escenarios conservadores.",
+          closingHelpY1:
+            "Meta de transacciones en el año; decenas de cierres generan GMV de {gmv} con el ASP indicado.",
+          closingHelpY2: "Escala anual proyectada; con este ASP, el GMV de referencia es {gmv}.",
+          closingHelpY3: "Proyección de cierres con madurez del funnel; el GMV estimado es {gmv}.",
+        },
+        team: {
+          title: "Equipo (sueldos y hires por año)",
+          intro:
+            "Define el rol, sueldo mensual y año de contratación (Y0 = contratado antes de Y1).",
+          salaryHelp:
+            "Sueldos anuales según equipo activo: Y1 = {y1} · Y2 = {y2} · Y3 = {y3}.",
+          srLabel: "Sr Analyst (hire por año)",
+          jrLabel: "Jr Analyst (hire por año)",
+          gmLabel: "Activar GM",
+          gmHelp: "General Manager enfocado en estrategia y coordinación comercial.",
+          defaultOption: "Seleccione año",
+          srTitle: "Sr. Analyst",
+          jrTitle: "Jr. Analyst",
+          salaryLabel: "Sueldo (USD/mes)",
+          salaryHelpSr: "Salario mensual bruto; perfiles senior en MX suelen estar en USD 3k–5k.",
+          salaryHelpJr: "Salario mensual bruto; perfiles junior suelen estar en USD 1.8k–2.8k.",
+          countLabel: "¿Cuántos contratas?",
+          srCountHelp: "Define la cantidad de contrataciones para este rol; 0–2 suele ser realista en arranque.",
+          jrCountHelp:
+            "Ajusta el número de analistas junior; arrancar con 0–2 mantiene la estructura ligera.",
+          yearLabel: "¿En qué año los contratas?",
+        },
+        brainium: {
+          title: "Brainium (consultor externo)",
+          monthlyLabel: "Fee mensual primeros {months} meses (USD)",
+          monthlyHelp: "Retainer mensual inicial; suele estar entre USD 5k–10k según alcance.",
+          successLabel: "Success fee mes 7 (USD)",
+          successHelp: "Bono único por implementación exitosa; entre USD 5k–15k es típico.",
+          revshareLabel: "% comisión sobre ingresos por comisiones (rev-share)",
+          revshareHelp: "Porcentaje variable sobre ingresos de comisión; rangos de 5%–15% son comunes.",
+          totalsHelp:
+            "Asumimos que el % de comisión aplica a los primeros 3 años. Totales Brainium (retainer + success fee + rev-share): Y1 = {y1} · Y2 = {y2} · Y3 = {y3}.",
+        },
+      },
+      keyStats: {
+        closings: "Cierres Y1 (escenario base)",
+        commissionRevenue: "Ingresos por comisiones Y1",
+        netIncome: "Utilidad neta Y1",
+        cashMonth: "Mes caja positiva",
+        asp: "ASP",
+        capture: "Captura mezclada",
+        closeAndCpl: "Tasa de cierre / CPL",
+        salaries: "Sueldos anuales Y1",
+      },
+      monthPositive: (month: number) =>
+        month > 0 ? `Mes ${month}` : "No positivo en Y1",
+      sectionTitles: {
+        teamDashboard: "Dashboard de equipo (selección actual)",
+        unitEconomics: "Unit economics Y1 (escenario base)",
+        pnl: "P&L 36 meses (escenario base)",
+        sensitivity: "Sensibilidad Y3 (Downside / Base / Upside)",
+        cash: "Caja año 1 y necesidad de capital",
+      },
+      teamTableEmpty: "Activa al menos un miembro para ver la tabla.",
+      unitEconomicsRows: {
+        commission: "Ingreso promedio por comisión por cierre",
+        acquisition: "Costo de adquisición por cierre",
+        contribution: "Contribución neta por cierre",
+      },
+      teamTableHeaders: [
+        "Nombre",
+        "Rol",
+        "Año de contratación",
+        "Sueldo (USD/mes)",
+        "Funciones principales",
+      ],
+      pnlHeaders: [
+        "Año",
+        "Cierres",
+        "GMV",
+        "Leads",
+        "Medios (marketing)",
+        "Ingresos comisión",
+        "Broker (25%)",
+        "Sueldos",
+        "Overhead",
+        "Neto",
+        "Margen neto (sobre comisión)",
+      ],
+      sensitivityHeaders: [
+        "Escenario",
+        "Cierres",
+        "Captura mezclada",
+        "Tasa cierre / CPL",
+        "GMV",
+        "Leads / Medios (marketing)",
+        "Ingresos comisión",
+        "Broker (25%)",
+        "Sueldos+OH",
+        "Neto",
+        "Margen neto (sobre comisión)",
+      ],
+      cashSummaryTitle: "Resumen de caja",
+      cashSummary: {
+        burn: "Burn mensual M1–M3 (sin ventas):",
+        net: "Utilidad neta mensual promedio M4–M12:",
+        deficit: "Déficit acumulado máximo:",
+        turn: "Punto de caja positiva: alrededor de mes",
+      },
+      cashChartTitle: "Caja acumulada (meses 1–12)",
+      howToReadMetricNote:
+        "AI-first sales engine converting international demand for TAO land and condos into high-margin commissions, launching in Riviera Maya and expanding to Baja California.",
+    },
+    narrative: {
+      headerTitle: "Vista para Inversionistas — Narrativa y estrategia comercial",
+      investmentSummaryTitle: "Investment summary",
+      investmentSummaryItems: [
+        "Stage: internal venture within TAO / pre-seed.",
+        "Focus: AI Sales Agents to sell and rent TAO inventory (Riviera Maya + Baja).",
+        "Revenue model: commissions on closings + potential developer fees.",
+        "Use of capital: fund 12–18 months of ops/product (keep text editable, no exact amounts).",
+      ],
+      helperText:
+        "Narrativa y Estrategia → visión y modelo de negocio. Big Data → estrategia de 80k leads actuales + 300k–500k nuevos. AI Sales Agents → cómo operan los agentes en el día a día.",
+      tabs: {
+        narrative: "Narrativa y Estrategia",
+        bigdata: "Big Data",
+        agents: "AI Sales Agents",
+      },
+      descriptions: {
+        narrative:
+          "Estamos creando una operación comercial centrada en datos y agentes de IA que identifican, nutren y escalan a brokers sólo cuando hay alta probabilidad de cierre, reduciendo costos y acelerando conversiones.",
+        bigdata:
+          "El plan es limpiar y enriquecer la base de 80k contactos, reactivarlos con agentes de IA y crecerla a 500k+ prospectos cualificados mediante data partners, audiencias por intención y contenidos enfocados en Baja y Riviera Maya.",
+      },
+      sectionTitles: {
+        summary: "Resumen en una línea",
+        problem: "Problema y por qué ahora",
+        product: "Producto y ventaja competitiva",
+        nextSteps: "Próximos pasos",
+        roadmap: "Roadmap 0–24 meses",
+        bigData: "Estrategia para construir una base de datos de 500,000+ compradores extranjeros",
+        howAgentsWork: "Cómo funciona el Agente de Ventas de IA",
+        agentExamples: "Ejemplos de Agentes de Ventas de IA desplegados (experiencia del comprador)",
+      },
+      agentTabs: {
+        narrative: "Narrativa y Estrategia",
+        bigdata: "Big Data",
+        agents: "AI Sales Agents",
+      },
+    },
+  },
+  en: {
+    dashboardTitle: "TAO Investor Dashboard",
+    tabs: {
+      model: "Financial model",
+      narrative: "Narrative & strategy",
+    },
+    model: {
+      headerTitle: "Investor View — Financial model",
+      heroSubtitle:
+        "AI-first sales engine converting international demand for TAO land and condos into high-margin commissions, launching in Riviera Maya and expanding to Baja California.",
+      heroNote:
+        "Adjust annual closings, commercial assumptions, Brainium fees, and team. The model recalculates GMV, commissions, margins, and cash in real time.",
+      glossaryTitle: "Rationale for initial values.",
+      glossaryItems: [
+        "ASP (USD 225k): historic average ticket for land and condos in Riviera Maya (mix between USD 180k–260k), consistent with the current pipeline.",
+        "Blended capture (3.65%): weighted average between 3% projects and 4–5% structures, assuming 70% direct inventory and 30% co-broker.",
+        "Close rate (2%): ratio seen in past digital campaigns (1.6%–2.2%) on qualified leads, conservative for a first year with new nurturing flows.",
+        "Blended CPL (USD 30): mix of organic and paid channels (SEM, social, referrals) typically ranging USD 18–40 per lead in recent tests.",
+        "Closings Y1/Y2/Y3 (180 / 400 / 650): tied to team capacity (2 analysts + external brokers) and quarterly ramp: ~15 monthly closes in Y1, doubling with more inventory and automation in Y2–Y3.",
+      ],
+      metricsGlossary: [
+        "ASP: average selling price (USD) used to calculate GMV.",
+        "Blended capture: average commission applied to GMV to estimate revenue.",
+        "Close rate: percentage of qualified leads that end up closing.",
+        "Blended CPL: average cost per lead across paid and organic.",
+        "Closings Y1/Y2/Y3: annual transaction goals that drive GMV.",
+      ],
+      howToReadTitle: "How to read this model",
+      howToReadPoints: [
+        "Adjust commercial, closing, and team assumptions in the controls to see real-time impact on GMV, revenue, and cash.",
+        "Compare the base P&L and sensitivity tables to see how margins, salaries, and net income change per scenario.",
+        "Cash flow assumes 3 months with no sales and 9 months with closings; the \"positive cash month\" indicates when cumulative returns to zero.",
+      ],
+      howToReadDisclaimer:
+        "This model is illustrative and assumption-driven; it is not a guaranteed projection or binding offer.",
+      controlsTitle: "Model controls",
+      controlsRealtimeNote: "Changes apply in real time to P&L and cash.",
+      resetButton: "Reset to defaults",
+      controlGroups: {
+        commercial: {
+          title: "Commercial assumptions",
+          aspLabel: "ASP (USD)",
+          aspHelp: "Average ticket per deal; USD 180k–260k is common for lots and condos.",
+          captureLabel: "Blended capture (%)",
+          captureHelp:
+            "Weighted commission mix to estimate revenue; 3%–5% is typical depending on inventory and agreements.",
+          closeRateLabel: "Close rate (%)",
+          closeRateHelp:
+            "Percentage of qualified leads that close; 1.5%–2.5% aligns with similar funnels.",
+          cplLabel: "Blended CPL (USD)",
+          cplHelp:
+            "Average cost per lead across paid and organic channels; USD 20–40 is a reference range.",
+          closingsLabel: "Closings per year",
+          closingsGroupTitle: "Expected closings per year",
+          closingsHelp:
+            "Annual closing goals driving GMV; simulate ramp-up or conservative scenarios.",
+          closingHelpY1:
+            "Annual transaction goal; dozens of closings generate GMV of {gmv} with the stated ASP.",
+          closingHelpY2: "Projected annual scale; at this ASP, reference GMV is {gmv}.",
+          closingHelpY3: "Closing projection with a mature funnel; estimated GMV is {gmv}.",
+        },
+        team: {
+          title: "Team (salaries and hiring per year)",
+          intro:
+            "Define role, monthly salary, and hire year (Y0 = hired before Y1).",
+          salaryHelp:
+            "Annual salaries by active team: Y1 = {y1} · Y2 = {y2} · Y3 = {y3}.",
+          srLabel: "Sr Analyst (hire by year)",
+          jrLabel: "Jr Analyst (hire by year)",
+          gmLabel: "Activate GM",
+          gmHelp: "General Manager focused on strategy and commercial coordination.",
+          defaultOption: "Select year",
+          srTitle: "Sr. Analyst",
+          jrTitle: "Jr. Analyst",
+          salaryLabel: "Salary (USD/mo)",
+          salaryHelpSr: "Gross monthly salary; senior profiles in MX often range USD 3k–5k.",
+          salaryHelpJr: "Gross monthly salary; junior profiles often range USD 1.8k–2.8k.",
+          countLabel: "How many do you hire?",
+          srCountHelp: "Define the number of hires for this role; 0–2 is realistic to start.",
+          jrCountHelp: "Adjust junior analyst hires; starting with 0–2 keeps the org lean.",
+          yearLabel: "In which year do you hire them?",
+        },
+        brainium: {
+          title: "Brainium (external consultant)",
+          monthlyLabel: "Monthly fee first {months} months (USD)",
+          monthlyHelp: "Initial monthly retainer; often USD 5k–10k depending on scope.",
+          successLabel: "Success fee month 7 (USD)",
+          successHelp: "One-time bonus for successful implementation; USD 5k–15k is typical.",
+          revshareLabel: "% commission on commission revenue (rev-share)",
+          revshareHelp: "Variable percentage on commission revenue; 5%–15% is common.",
+          totalsHelp:
+            "Assumes % commission applies for the first 3 years. Brainium totals (retainer + success fee + rev-share): Y1 = {y1} · Y2 = {y2} · Y3 = {y3}.",
+        },
+      },
+      keyStats: {
+        closings: "Closings Y1 (base)",
+        commissionRevenue: "Commission revenue Y1",
+        netIncome: "Net income Y1",
+        cashMonth: "Positive cash month",
+        asp: "ASP",
+        capture: "Blended capture",
+        closeAndCpl: "Close rate / CPL",
+        salaries: "Annual salaries Y1",
+      },
+      monthPositive: (month: number) => (month > 0 ? `Month ${month}` : "Not positive in Y1"),
+      sectionTitles: {
+        teamDashboard: "Team dashboard (current selection)",
+        unitEconomics: "Unit economics Y1 (base scenario)",
+        pnl: "P&L 36 months (base scenario)",
+        sensitivity: "Y3 sensitivity (Downside / Base / Upside)",
+        cash: "Year-1 cash and capital needs",
+      },
+      teamTableEmpty: "Activate at least one team member to view the table.",
+      unitEconomicsRows: {
+        commission: "Average commission revenue per closing",
+        acquisition: "Acquisition cost per closing",
+        contribution: "Net contribution per closing",
+      },
+      teamTableHeaders: [
+        "Name",
+        "Role",
+        "Hire year",
+        "Salary (USD/mo)",
+        "Primary functions",
+      ],
+      pnlHeaders: [
+        "Year",
+        "Closings",
+        "GMV",
+        "Leads",
+        "Media (marketing)",
+        "Commission revenue",
+        "Broker (25%)",
+        "Salaries",
+        "Overhead",
+        "Net",
+        "Net margin (on commission)",
+      ],
+      sensitivityHeaders: [
+        "Scenario",
+        "Closings",
+        "Blended capture",
+        "Close rate / CPL",
+        "GMV",
+        "Leads / Media (marketing)",
+        "Commission revenue",
+        "Broker (25%)",
+        "Salaries+OH",
+        "Net",
+        "Net margin (on commission)",
+      ],
+      cashSummaryTitle: "Cash summary",
+      cashSummary: {
+        burn: "Monthly burn M1–M3 (no sales):",
+        net: "Avg. net income per month M4–M12:",
+        deficit: "Max cumulative deficit:",
+        turn: "Positive cash point: around month",
+      },
+      cashChartTitle: "Cumulative cash (months 1–12)",
+      howToReadMetricNote:
+        "AI-first sales engine converting international demand for TAO land and condos into high-margin commissions, launching in Riviera Maya and expanding to Baja California.",
+    },
+    narrative: {
+      headerTitle: "Investor View — Narrative and commercial strategy",
+      investmentSummaryTitle: "Investment summary",
+      investmentSummaryItems: [
+        "Stage: internal venture within TAO / pre-seed.",
+        "Focus: AI Sales Agents to sell and rent TAO inventory (Riviera Maya + Baja).",
+        "Revenue model: commissions on closings + potential developer fees.",
+        "Use of capital: fund 12–18 months of ops/product (keep text editable, no exact amounts).",
+      ],
+      helperText:
+        "Narrative & Strategy → vision and business model. Big Data → strategy for 80k existing leads + 300k–500k new. AI Sales Agents → how agents operate day to day.",
+      tabs: {
+        narrative: "Narrative & Strategy",
+        bigdata: "Big Data",
+        agents: "AI Sales Agents",
+      },
+      descriptions: {
+        narrative:
+          "We are building a data-driven commercial operation with AI agents that identify, nurture, and only escalate to brokers when the probability of closing is high, reducing costs and accelerating conversions.",
+        bigdata:
+          "Plan: clean and enrich the 80k-contact base, reactivate via AI agents, and grow it to 500k+ qualified prospects through data partners, intent audiences, and content focused on Baja and Riviera Maya.",
+      },
+      sectionTitles: {
+        summary: "One-line summary",
+        problem: "Problem and why now",
+        product: "Product and competitive advantage",
+        nextSteps: "Next steps",
+        roadmap: "Roadmap 0–24 months",
+        bigData: "Strategy to build a database of 500,000+ foreign buyers",
+        howAgentsWork: "How the AI Sales Agent works",
+        agentExamples: "Examples of deployed AI Sales Agents (buyer experience)",
+      },
+      agentTabs: {
+        narrative: "Narrative & Strategy",
+        bigdata: "Big Data",
+        agents: "AI Sales Agents",
+      },
+    },
+  },
+};
+
 /**
  * TaoDashboard.tsx
  *
@@ -279,6 +688,8 @@ const CashChart: React.FC<{
 /** ---------------------------
  *  VISTA: MODELO FINANCIERO (Slide 1)
  *  --------------------------- */
+const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
+  const t = copy[language].model;
 const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) => {
   // Defaults comerciales
   const DEFAULT_ASP = 225_000;
@@ -559,19 +970,7 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
   const monthOfTurnPositive = cumulative.findIndex((v) => v > 0) + 1;
 
   /** ---- TABLAS ---- */
-  const pnlHeaders = [
-    "Año",
-    "Cierres",
-    "GMV",
-    "Leads",
-    "Medios (marketing)",
-    "Ingresos comisión",
-    "Broker (25%)",
-    "Sueldos",
-    "Overhead",
-    "Neto",
-    "Margen neto (sobre comisión)",
-  ];
+  const pnlHeaders = t.pnlHeaders;
 
   const pnlRows = basePnL.map((r) => [
     `Y${r.year}`,
@@ -587,19 +986,7 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
     pct1(r.netMarginOnRev),
   ]);
 
-  const sensHeaders = [
-    "Escenario",
-    "Cierres",
-    "Captura mezclada",
-    "Tasa cierre / CPL",
-    "GMV",
-    "Leads / Medios (marketing)",
-    "Ingresos comisión",
-    "Broker (25%)",
-    "Sueldos+OH",
-    "Neto",
-    "Margen neto (sobre comisión)",
-  ];
+  const sensHeaders = t.sensitivityHeaders;
 
   const sensRows = sensitivity.map((s) => [
     s.name,
@@ -615,132 +1002,80 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
     pct1(s.netMarginOnRev),
   ]);
 
-  const teamDashboardHeaders = [
-    "Nombre",
-    "Rol",
-    "Año de contratación",
-    "Sueldo (USD/mes)",
-    "Funciones principales",
-  ];
+  const teamDashboardHeaders = t.teamTableHeaders;
 
   return (
     <div data-language={language} style={styles.wrap}>
       {/* Header */}
       <header style={styles.header}>
-        <h1 style={styles.h1}>Vista para Inversionistas — Modelo financiero</h1>
+        <h1 style={styles.h1}>{t.headerTitle}</h1>
         <div style={styles.headStats}>
-          <KeyStat label="Cierres Y1 (escenario base)" value={y1.closings.toLocaleString()} />
-          <KeyStat label="Ingresos por comisiones Y1" value={usd0(y1.commissionRevenue)} />
-          <KeyStat label="Utilidad neta Y1" value={usd0(y1.net)} />
+          <KeyStat label={t.keyStats.closings} value={y1.closings.toLocaleString()} />
+          <KeyStat label={t.keyStats.commissionRevenue} value={usd0(y1.commissionRevenue)} />
+          <KeyStat label={t.keyStats.netIncome} value={usd0(y1.net)} />
           <KeyStat
-            label="Mes caja positiva"
-            value={monthOfTurnPositive > 0 ? `Mes ${monthOfTurnPositive}` : "No positivo en Y1"}
+            label={t.keyStats.cashMonth}
+            value={t.monthPositive(monthOfTurnPositive)}
           />
         </div>
-        <div style={{ ...styles.headNote, marginTop: 6 }}>
-          AI-first sales engine converting international demand for TAO land and condos into
-          high-margin commissions, launching in Riviera Maya and expanding to Baja California.
-        </div>
+        <div style={{ ...styles.headNote, marginTop: 6 }}>{t.heroSubtitle}</div>
         <div style={styles.headStats}>
-          <KeyStat label="ASP" value={usd0(asp)} />
-          <KeyStat label="Captura mezclada" value={pct1(capture)} />
+          <KeyStat label={t.keyStats.asp} value={usd0(asp)} />
+          <KeyStat label={t.keyStats.capture} value={pct1(capture)} />
           <KeyStat
-            label="Tasa de cierre / CPL"
+            label={t.keyStats.closeAndCpl}
             value={`${pct1(closeRate)} / ${usd0(cpl)}`}
           />
-          <KeyStat label="Sueldos anuales Y1" value={usd0(SALARIES_Y1)} />
+          <KeyStat label={t.keyStats.salaries} value={usd0(SALARIES_Y1)} />
         </div>
-        <div style={styles.headNote}>
-          Ajusta cierres por año, supuestos comerciales, Brainium y equipo. El modelo recalcula GMV,
-          comisiones, márgenes y caja en tiempo real.
-        </div>
+        <div style={styles.headNote}>{t.heroNote}</div>
         <div style={{ ...styles.headNote, color: "#4b5563" }}>
           <ul className={styles.ul as unknown as string} style={styles.ul}>
-            <li>
-              <strong>ASP:</strong> ticket medio por unidad vendida (USD) sobre el cual se calcula el GMV.
-            </li>
-            <li>
-              <strong>Captura mezclada:</strong> comisión promedio aplicada al GMV para estimar ingresos.
-            </li>
-            <li>
-              <strong>Tasa de cierre:</strong> porcentaje de leads calificados que terminan en un cierre.
-            </li>
-            <li>
-              <strong>CPL mezclado:</strong> costo promedio por lead considerando canales pagados y orgánicos.
-            </li>
-            <li>
-              <strong>Cierres Y1/Y2/Y3:</strong> metas de transacciones anuales que impulsan el GMV.
-            </li>
+            {t.metricsGlossary.map((item: string) => (
+              <li key={item}>
+                <strong>{item.split(":")[0]}:</strong> {item.split(":").slice(1).join(":").trim()}
+              </li>
+            ))}
           </ul>
         </div>
         <div style={{ ...styles.headNote, color: "#111827", background: "#f9fafb", padding: 12 }}>
-          <strong>Justificación de valores iniciales.</strong>
+          <strong>{t.glossaryTitle}</strong>
           <ul style={{ margin: "8px 0 0 16px", lineHeight: 1.5 }}>
-            <li>
-              <strong>ASP (USD 225k):</strong> ticket medio histórico de ventas de tierra y condo en Riviera
-              Maya (mix de unidades entre USD 180k–260k), consistente con el pipeline actual.
-            </li>
-            <li>
-              <strong>Captura mezclada (3.65%):</strong> promedio ponderado entre proyectos con comisión del 3%
-              y desarrollos con estructura 4–5%, asumiendo 70% inventario directo y 30% co-broker.
-            </li>
-            <li>
-              <strong>Tasa de cierre (2%):</strong> ratio observado en campañas digitales pasadas (1.6%–2.2%)
-              sobre leads calificados, conservador para un primer año con nuevos flujos de nurturing.
-            </li>
-            <li>
-              <strong>CPL mezclado (USD 30):</strong> mezcla de canales orgánicos y pagados (SEM, sociales y
-              referidos) que han oscilado entre USD 18–40 por lead en pruebas recientes.
-            </li>
-            <li>
-              <strong>Cierres Y1/Y2/Y3 (180 / 400 / 650):</strong> deriva de la capacidad del equipo (2
-              analistas + brokers externos) y ramp-up trimestral: ~15 cierres mensuales promedio en Y1,
-              duplicando productividad con mayor inventario y automatización en Y2–Y3.
-            </li>
+            {t.glossaryItems.map((item: string) => (
+              <li key={item}>{item}</li>
+            ))}
           </ul>
         </div>
       </header>
 
-      <Section title="Cómo leer este modelo">
+      <Section title={t.howToReadTitle}>
         <ul className={styles.ul as unknown as string} style={styles.ul}>
-          <li>
-            Ajusta los supuestos comerciales, de cierres y de equipo en los controles para ver los
-            impactos en GMV, ingresos y caja en tiempo real.
-          </li>
-          <li>
-            Compara la tabla P&L base y la tabla de sensibilidad para ver cómo cambian márgenes,
-            salarios y utilidades netas por escenario.
-          </li>
-          <li>
-            El flujo de caja Y1 asume 3 meses sin ventas y 9 meses con cierres; la cifra de "mes
-            caja positiva" refleja cuándo el acumulado vuelve a cero.
-          </li>
+          {t.howToReadPoints.map((item: string) => (
+            <li key={item}>{item}</li>
+          ))}
         </ul>
         <p className={styles.pSmall as unknown as string} style={styles.pSmall}>
-          Este modelo es ilustrativo y depende de supuestos; no constituye una proyección
-          garantizada ni una oferta vinculante.
+          {t.howToReadDisclaimer}
         </p>
       </Section>
 
       {/* Controles */}
-      <Section title="Controles del modelo">
+      <Section title={t.controlsTitle}>
         <Card>
           <div style={styles.controlsHeaderRow}>
-            <div style={{ fontSize: 12, color: "#4b5563" }}>
-              Los cambios se aplican en tiempo real al P&L y a la caja.
-            </div>
+            <div style={{ fontSize: 12, color: "#4b5563" }}>{t.controlsRealtimeNote}</div>
             <button type="button" onClick={handleReset} style={styles.resetButton}>
-              Restablecer valores iniciales
+              {t.resetButton}
             </button>
           </div>
 
           <div style={styles.controlsGrid}>
             {/* Supuestos comerciales */}
             <div style={styles.controlGroup}>
-              <div style={styles.controlLabel}>Supuestos comerciales</div>
+              <div style={styles.controlLabel}>{t.controlGroups.commercial.title}</div>
 
               <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>ASP (USD)</label>
+                <label style={styles.controlFieldLabel}>{t.controlGroups.commercial.aspLabel}</label>
                 <input
                   type="number"
                   min={50_000}
@@ -749,13 +1084,11 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                   onChange={(e) => setAsp(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>
-                  Ticket promedio por operación; USD 180k–260k es común para lotes y condos.
-                </div>
+                <div style={styles.controlHelp}>{t.controlGroups.commercial.aspHelp}</div>
               </div>
 
               <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>Captura mezclada (%)</label>
+                <label style={styles.controlFieldLabel}>{t.controlGroups.commercial.captureLabel}</label>
                 <input
                   type="number"
                   min={0}
@@ -765,13 +1098,11 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                   onChange={(e) => setCapturePct(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>
-                  Comisión promedio sobre GMV; blends de 3%–5% son habituales según mix de proyectos.
-                </div>
+                <div style={styles.controlHelp}>{t.controlGroups.commercial.captureHelp}</div>
               </div>
 
               <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>Tasa de cierre (%)</label>
+                <label style={styles.controlFieldLabel}>{t.controlGroups.commercial.closeRateLabel}</label>
                 <input
                   type="number"
                   min={0.1}
@@ -781,13 +1112,11 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                   onChange={(e) => setClosePct(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>
-                  Porcentaje de leads calificados que cierran; 1%–3% es razonable para campañas digitales.
-                </div>
+                <div style={styles.controlHelp}>{t.controlGroups.commercial.closeRateHelp}</div>
               </div>
 
               <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>CPL mezclado (USD)</label>
+                <label style={styles.controlFieldLabel}>{t.controlGroups.commercial.cplLabel}</label>
                 <input
                   type="number"
                   min={1}
@@ -796,15 +1125,13 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                   onChange={(e) => setCpl(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>
-                  Costo promedio por lead combinando orgánico y pagado; USD 20–40 suele ser el rango.
-                </div>
+                <div style={styles.controlHelp}>{t.controlGroups.commercial.cplHelp}</div>
               </div>
             </div>
 
             {/* Cierres / GMV */}
             <div style={styles.controlGroup}>
-              <div style={styles.controlLabel}>Cierres esperados por año</div>
+              <div style={styles.controlLabel}>{t.controlGroups.commercial.closingsGroupTitle}</div>
 
               <div style={styles.controlField}>
                 <label style={styles.controlFieldLabel}>Cierres Y1</label>
@@ -817,8 +1144,10 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                   style={styles.controlInput}
                 />
                 <div style={styles.controlHelp}>
-                  Meta de transacciones en el año; decenas de cierres generan GMV de
-                  <strong> {usd0(closingsY1 * asp)}</strong> con el ASP indicado.
+                  {t.controlGroups.commercial.closingHelpY1.replace(
+                    "{gmv}",
+                    usd0(closingsY1 * asp)
+                  )}
                 </div>
               </div>
 
@@ -833,8 +1162,10 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                   style={styles.controlInput}
                 />
                 <div style={styles.controlHelp}>
-                  Escala anual proyectada; con este ASP, el GMV de referencia es
-                  <strong> {usd0(closingsY2 * asp)}</strong>.
+                  {t.controlGroups.commercial.closingHelpY2.replace(
+                    "{gmv}",
+                    usd0(closingsY2 * asp)
+                  )}
                 </div>
               </div>
 
@@ -849,29 +1180,31 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                   style={styles.controlInput}
                 />
                 <div style={styles.controlHelp}>
-                  Proyección de cierres con madurez del funnel; el GMV estimado es
-                  <strong> {usd0(closingsY3 * asp)}</strong>.
+                  {t.controlGroups.commercial.closingHelpY3.replace(
+                    "{gmv}",
+                    usd0(closingsY3 * asp)
+                  )}
                 </div>
               </div>
             </div>
 
             {/* Equipo */}
             <div style={styles.controlGroup}>
-              <div style={styles.controlLabel}>Equipo y contrataciones</div>
+              <div style={styles.controlLabel}>{t.controlGroups.team.title}</div>
 
-              <div style={styles.controlHelp}>
-                Define el rol, sueldo mensual y año de contratación (Y0 = contratado antes de Y1).
-              </div>
+              <div style={styles.controlHelp}>{t.controlGroups.team.intro}</div>
 
               <div style={styles.teamGrid}>
                 <div style={styles.teamMemberCard}>
                   <div style={styles.teamMemberHeader}>
-                    <div style={{ fontWeight: 600 }}>Sr. Analyst</div>
+                    <div style={{ fontWeight: 600 }}>{t.controlGroups.team.srTitle}</div>
                   </div>
 
                   <div style={styles.teamFieldsGrid}>
                     <div style={styles.controlField}>
-                      <label style={styles.controlFieldLabel}>Sueldo (USD/mes)</label>
+                      <label style={styles.controlFieldLabel}>
+                        {t.controlGroups.team.salaryLabel}
+                      </label>
                       <input
                         type="number"
                         min={0}
@@ -880,13 +1213,11 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                         onChange={(e) => setSrAnalystSalary(Number(e.target.value) || 0)}
                         style={styles.controlInput}
                       />
-                      <div style={styles.controlHelp}>
-                        Salario mensual bruto; perfiles senior en MX suelen estar en USD 3k–5k.
-                      </div>
+                      <div style={styles.controlHelp}>{t.controlGroups.team.salaryHelpSr}</div>
                     </div>
 
                     <div style={styles.controlField}>
-                      <label style={styles.controlFieldLabel}>¿Cuántos contratas?</label>
+                      <label style={styles.controlFieldLabel}>{t.controlGroups.team.countLabel}</label>
                       <select
                         value={srAnalystHires.length}
                         onChange={(e) =>
@@ -903,13 +1234,13 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                         ))}
                       </select>
                       <div style={styles.controlHelp}>
-                        Define la cantidad de contrataciones para este rol; 0–2 suele ser realista en arranque.
+                        {t.controlGroups.team.srCountHelp}
                       </div>
                     </div>
 
                     {srAnalystHires.map((year, idx) => (
                       <div key={idx} style={styles.controlField}>
-                        <label style={styles.controlFieldLabel}>{`Año de contratación ${idx + 1}`}</label>
+                        <label style={styles.controlFieldLabel}>{`${t.controlGroups.team.yearLabel} ${idx + 1}`}</label>
                         <select
                           value={year}
                           onChange={(e) =>
@@ -934,12 +1265,14 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
 
                 <div style={styles.teamMemberCard}>
                   <div style={styles.teamMemberHeader}>
-                    <div style={{ fontWeight: 600 }}>Jr. Analyst</div>
+                    <div style={{ fontWeight: 600 }}>{t.controlGroups.team.jrTitle}</div>
                   </div>
 
                   <div style={styles.teamFieldsGrid}>
                     <div style={styles.controlField}>
-                      <label style={styles.controlFieldLabel}>Sueldo (USD/mes)</label>
+                      <label style={styles.controlFieldLabel}>
+                        {t.controlGroups.team.salaryLabel}
+                      </label>
                       <input
                         type="number"
                         min={0}
@@ -948,13 +1281,11 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                         onChange={(e) => setJrAnalystSalary(Number(e.target.value) || 0)}
                         style={styles.controlInput}
                       />
-                      <div style={styles.controlHelp}>
-                        Salario mensual bruto; perfiles junior en MX suelen ir de USD 1.5k–3k.
-                      </div>
+                      <div style={styles.controlHelp}>{t.controlGroups.team.salaryHelpJr}</div>
                     </div>
 
                     <div style={styles.controlField}>
-                      <label style={styles.controlFieldLabel}>¿Cuántos contratas?</label>
+                      <label style={styles.controlFieldLabel}>{t.controlGroups.team.countLabel}</label>
                       <select
                         value={jrAnalystHires.length}
                         onChange={(e) =>
@@ -971,13 +1302,13 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                         ))}
                       </select>
                       <div style={styles.controlHelp}>
-                        Ajusta el número de analistas junior; arrancar con 0–2 mantiene la estructura ligera.
+                        {t.controlGroups.team.jrCountHelp}
                       </div>
                     </div>
 
                     {jrAnalystHires.map((year, idx) => (
                       <div key={idx} style={styles.controlField}>
-                        <label style={styles.controlFieldLabel}>{`Año de contratación ${idx + 1}`}</label>
+                        <label style={styles.controlFieldLabel}>{`${t.controlGroups.team.yearLabel} ${idx + 1}`}</label>
                         <select
                           value={year}
                           onChange={(e) =>
@@ -1009,11 +1340,11 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
 
             {/* Brainium */}
             <div style={styles.controlGroup}>
-              <div style={styles.controlLabel}>Brainium (consultor externo)</div>
+              <div style={styles.controlLabel}>{t.controlGroups.brainium.title}</div>
 
               <div style={styles.controlField}>
                 <label style={styles.controlFieldLabel}>
-                  Fee mensual primeros {BRAINIUM_FEE_MONTHS} meses (USD)
+                  {t.controlGroups.brainium.monthlyLabel.replace("{months}", `${BRAINIUM_FEE_MONTHS}`)}
                 </label>
                 <input
                   type="number"
@@ -1023,13 +1354,11 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                   onChange={(e) => setBrainiumMonthlyFee(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>
-                  Retainer mensual inicial; suele estar entre USD 5k–10k según alcance.
-                </div>
+                <div style={styles.controlHelp}>{t.controlGroups.brainium.monthlyHelp}</div>
               </div>
 
               <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>Success fee mes 7 (USD)</label>
+                <label style={styles.controlFieldLabel}>{t.controlGroups.brainium.successLabel}</label>
                 <input
                   type="number"
                   min={0}
@@ -1038,14 +1367,12 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                   onChange={(e) => setBrainiumSuccessFee(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>
-                  Bono único por implementación exitosa; entre USD 5k–15k es típico.
-                </div>
+                <div style={styles.controlHelp}>{t.controlGroups.brainium.successHelp}</div>
               </div>
 
               <div style={styles.controlField}>
                 <label style={styles.controlFieldLabel}>
-                  % comisión sobre ingresos por comisiones (rev-share)
+                  {t.controlGroups.brainium.revshareLabel}
                 </label>
                 <input
                   type="number"
@@ -1058,47 +1385,45 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
                   }
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>
-                  Porcentaje variable sobre ingresos de comisión; rangos de 5%–15% son comunes.
-                </div>
+                <div style={styles.controlHelp}>{t.controlGroups.brainium.revshareHelp}</div>
               </div>
 
               <div style={styles.controlHelp}>
-                Asumimos que el % de comisión aplica a los primeros 3 años. Totales Brainium
-                (retainer + success fee + rev-share): Y1 <strong>{usd0(brainiumTotalY1)}</strong> ·
-                Y2 <strong>{usd0(brainiumTotalY2)}</strong> · Y3 <strong>{usd0(brainiumTotalY3)}</strong>
-                .
+                {t.controlGroups.brainium.totalsHelp
+                  .replace("{y1}", usd0(brainiumTotalY1))
+                  .replace("{y2}", usd0(brainiumTotalY2))
+                  .replace("{y3}", usd0(brainiumTotalY3))}
               </div>
             </div>
           </div>
         </Card>
       </Section>
 
-      <Section title="Dashboard de equipo (selección actual)">
+      <Section title={t.sectionTitles.teamDashboard}>
         <Card>
           {activeTeamMembers.length > 0 ? (
             <Table headers={teamDashboardHeaders} rows={teamDashboardRows} />
           ) : (
-            <div style={styles.controlHelp}>Activa al menos un miembro para ver la tabla.</div>
+            <div style={styles.controlHelp}>{t.teamTableEmpty}</div>
           )}
         </Card>
       </Section>
 
-      <Section title="Unit economics Y1 (escenario base)">
+      <Section title={t.sectionTitles.unitEconomics}>
         <Card>
-          <h3 style={styles.h3}>Unit economics Y1 (escenario base)</h3>
+          <h3 style={styles.h3}>{t.sectionTitles.unitEconomics}</h3>
           <table style={styles.table}>
             <tbody>
               <tr>
-                <td style={styles.td}>Ingreso promedio por comisión por cierre</td>
+                <td style={styles.td}>{t.unitEconomicsRows.commission}</td>
                 <td style={styles.td}>{usd0(commissionPerClosing)}</td>
               </tr>
               <tr>
-                <td style={styles.td}>Costo de adquisición por cierre</td>
+                <td style={styles.td}>{t.unitEconomicsRows.acquisition}</td>
                 <td style={styles.td}>{usd0(mediaPerClosing)}</td>
               </tr>
               <tr>
-                <td style={styles.td}>Contribución neta por cierre</td>
+                <td style={styles.td}>{t.unitEconomicsRows.contribution}</td>
                 <td style={styles.td}>{usd0(netPerClosing)}</td>
               </tr>
             </tbody>
@@ -1107,43 +1432,39 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
       </Section>
 
       {/* P&L */}
-      <Section title="P&L 36 meses (escenario base)">
+      <Section title={t.sectionTitles.pnl}>
         <Card>
           <Table headers={pnlHeaders} rows={pnlRows} />
         </Card>
       </Section>
 
       {/* Sensibilidad */}
-      <Section title="Sensibilidad Y3 (Downside / Base / Upside)">
+      <Section title={t.sectionTitles.sensitivity}>
         <Card>
           <Table headers={sensHeaders} rows={sensRows} />
         </Card>
       </Section>
 
       {/* Caja */}
-      <Section title="Caja año 1 y necesidad de capital">
+      <Section title={t.sectionTitles.cash}>
         <div style={styles.grid2}>
           <Card>
-            <CashChart data={cumulative} title="Caja acumulada (meses 1–12)" />
+            <CashChart data={cumulative} title={t.cashChartTitle} />
           </Card>
           <Card>
-            <h3 style={styles.h3}>Resumen de caja</h3>
+            <h3 style={styles.h3}>{t.cashSummaryTitle}</h3>
             <ul style={styles.ul}>
               <li>
-                Burn mensual M1–M3 (sin ventas):{" "}
-                <strong>{usd0(-MONTHLY_BURN_PRE_SALES)}</strong> por mes.
+                {t.cashSummary.burn} <strong>{usd0(-MONTHLY_BURN_PRE_SALES)}</strong>
               </li>
               <li>
-                Utilidad neta mensual promedio M4–M12:{" "}
-                <strong>{usd0(MONTHLY_NET_POST_SALES)}</strong>.
+                {t.cashSummary.net} <strong>{usd0(MONTHLY_NET_POST_SALES)}</strong>
               </li>
               <li>
-                Déficit acumulado máximo:{" "}
-                <strong>{usd0(Math.abs(maxDeficit))}</strong>.
+                {t.cashSummary.deficit} <strong>{usd0(Math.abs(maxDeficit))}</strong>
               </li>
               <li>
-                Punto de caja positiva: alrededor de mes{" "}
-                <strong>{monthOfTurnPositive}</strong>.
+                {t.cashSummary.turn} <strong>{monthOfTurnPositive}</strong>.
               </li>
             </ul>
           </Card>
@@ -1156,40 +1477,33 @@ const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) =>
 /** ---------------------------
  *  VISTA: NARRATIVA / STRATEGIA (Slide 2)
  *  --------------------------- */
+const InvestorNarrativeView: React.FC<{ language: Language }> = ({ language }) => {
 const InvestorNarrativeView: React.FC<{ language: "es" | "en" }> = ({ language }) => {
   const [activeTab, setActiveTab] = useState<"narrativa" | "bigdata" | "agents">(
     "narrativa"
   );
+  const t = copy[language].narrative;
 
   return (
     <div data-language={language} style={styles.wrap}>
       <header style={styles.header}>
-        <h1 style={styles.h1}>
-          Vista para Inversionistas — Narrativa y estrategia comercial
-        </h1>
+        <h1 style={styles.h1}>{t.headerTitle}</h1>
       </header>
 
       <Card style={{ marginBottom: 12 }}>
-        <h3 style={styles.h3}>Investment summary</h3>
+        <h3 style={styles.h3}>{t.investmentSummaryTitle}</h3>
         <ul style={styles.ul}>
-          <li>Stage: internal venture within TAO / pre-seed.</li>
-          <li>
-            Focus: AI Sales Agents to sell and rent TAO inventory (Riviera Maya +
-            Baja).
-          </li>
-          <li>Revenue model: commissions on closings + potential developer fees.</li>
-          <li>
-            Use of capital: fund 12–18 months of ops/product (keep text editable,
-            no exact amounts).
-          </li>
+          {t.investmentSummaryItems.map((item: string) => (
+            <li key={item}>{item}</li>
+          ))}
         </ul>
       </Card>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
         {([
-          { id: "narrativa", label: "Narrativa y Estrategia" },
-          { id: "bigdata", label: "Big Data" },
-          { id: "agents", label: "AI Sales Agents" },
+          { id: "narrativa", label: t.tabs.narrative },
+          { id: "bigdata", label: t.tabs.bigdata },
+          { id: "agents", label: t.tabs.agents },
         ] as const).map((tab) => (
           <button
             key={tab.id}
@@ -1210,22 +1524,19 @@ const InvestorNarrativeView: React.FC<{ language: "es" | "en" }> = ({ language }
       </div>
 
       <p style={{ ...styles.pSmall, marginBottom: 12 }}>
-        Narrativa y Estrategia → visión y modelo de negocio. Big Data → estrategia de 80k leads
-        actuales + 300k–500k nuevos. AI Sales Agents → cómo operan los agentes en el día a día.
+        {t.helperText}
       </p>
 
       {activeTab === "narrativa" && (
         <>
           <Card style={{ marginBottom: 12 }}>
             <p style={styles.p}>
-              Estamos creando una operación comercial centrada en datos y agentes de IA que
-              identifican, nutren y escalan a brokers sólo cuando hay alta probabilidad de
-              cierre, reduciendo costos y acelerando conversiones.
+              {t.descriptions.narrative}
             </p>
           </Card>
 
           {/* Resumen */}
-          <Section title="Resumen en una línea">
+          <Section title={t.sectionTitles.summary}>
             <Card>
               <p style={styles.p}>
                 Construir una organización de ventas <strong>AI-first</strong>, ligera y enfocada en
@@ -1237,7 +1548,7 @@ const InvestorNarrativeView: React.FC<{ language: "es" | "en" }> = ({ language }
           </Section>
 
           {/* Problema */}
-          <Section title="Problema y por qué ahora">
+          <Section title={t.sectionTitles.problem}>
             <Card>
               <p style={styles.p}>
                 El problema principal a resolver es cambiar el modelo de adquisición de clientes de:
@@ -1267,7 +1578,7 @@ const InvestorNarrativeView: React.FC<{ language: "es" | "en" }> = ({ language }
           </Section>
 
           {/* Producto y ventaja */}
-          <Section title="Producto y ventaja competitiva">
+          <Section title={t.sectionTitles.product}>
             <div style={styles.grid2}>
               <Card>
                 <h3 style={styles.h3}>Qué hacen los agentes</h3>
@@ -1300,7 +1611,7 @@ const InvestorNarrativeView: React.FC<{ language: "es" | "en" }> = ({ language }
           </Section>
 
           {/* Próximos pasos */}
-          <Section title="Próximos pasos">
+          <Section title={t.sectionTitles.nextSteps}>
             <Card>
               <ul style={styles.ul}>
                 <li>Definir métricas clave de conversión.</li>
@@ -1312,7 +1623,7 @@ const InvestorNarrativeView: React.FC<{ language: "es" | "en" }> = ({ language }
             </Card>
           </Section>
 
-          <Section title="Roadmap 0–24 meses">
+          <Section title={t.sectionTitles.roadmap}>
             <div style={styles.grid3}>
               <Card>
                 <h3 style={styles.h3}>0–6 meses</h3>
@@ -1352,15 +1663,11 @@ const InvestorNarrativeView: React.FC<{ language: "es" | "en" }> = ({ language }
       {activeTab === "bigdata" && (
         <>
           <Card style={{ marginBottom: 12 }}>
-            <p style={styles.p}>
-              El plan es limpiar y enriquecer la base de 80k contactos, reactivarlos con agentes de
-              IA y crecerla a 500k+ prospectos cualificados mediante data partners, audiencias por
-              intención y contenidos enfocados en Baja y Riviera Maya.
-            </p>
+            <p style={styles.p}>{t.descriptions.bigdata}</p>
           </Card>
 
           {/* ESTRATEGIA BASE DE DATOS 500K+ */}
-          <Section title="Estrategia para construir una base de datos de 500,000+ compradores extranjeros">
+          <Section title={t.sectionTitles.bigData}>
             <Card>
               <h3 style={styles.h3}>1. Reactivar y segmentar la base actual (80,000 registros)</h3>
               <ul style={styles.ul}>
@@ -1479,7 +1786,7 @@ const InvestorNarrativeView: React.FC<{ language: "es" | "en" }> = ({ language }
           </Card>
 
           {/* Flujo del agente */}
-          <Section title="Cómo funciona el Agente de Ventas de IA">
+          <Section title={t.sectionTitles.howAgentsWork}>
             <Card>
               <p style={styles.p}>
                 Un agente de ventas de IA funciona como concierge bilingüe siempre disponible: recibe
@@ -1552,7 +1859,7 @@ const InvestorNarrativeView: React.FC<{ language: "es" | "en" }> = ({ language }
           </Section>
 
           {/* Ejemplos */}
-          <Section title="Ejemplos de Agentes de Ventas de IA desplegados (experiencia del comprador)">
+          <Section title={t.sectionTitles.agentExamples}>
             <div style={styles.grid3}>
               <Card style={styles.exampleCard}>
                 <div style={styles.exampleStep}>Paso 1</div>
@@ -1614,6 +1921,44 @@ const InvestorNarrativeView: React.FC<{ language: "es" | "en" }> = ({ language }
  *  --------------------------- */
 const TaoDashboard: React.FC = () => {
   const [tab, setTab] = useState<"model" | "narrative">("model");
+  const [language, setLanguage] = useState<Language>("es");
+  const t = copy[language];
+
+  return (
+    <div style={{ padding: 18 }}>
+      <div style={{ marginBottom: 12, display: "flex", gap: 8, alignItems: "center" }}>
+        <h2 style={{ margin: 0, fontSize: 16 }}>{t.dashboardTitle}</h2>
+        <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
+          {["es", "en"].map((lng) => (
+            <button
+              key={lng}
+              onClick={() => setLanguage(lng as Language)}
+              style={{
+                padding: "6px 10px",
+                borderRadius: 8,
+                border: language === lng ? "1px solid #2563eb" : "1px solid #e5e7eb",
+                background: language === lng ? "#eff6ff" : "#ffffff",
+                cursor: "pointer",
+                fontWeight: 600,
+              }}
+            >
+              {lng.toUpperCase()}
+            </button>
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            onClick={() => setTab("model")}
+            style={{
+              padding: "6px 10px",
+              borderRadius: 8,
+              border: tab === "model" ? "1px solid #2563eb" : "1px solid #e5e7eb",
+              background: tab === "model" ? "#eff6ff" : "#ffffff",
+              cursor: "pointer",
+            }}
+          >
+            {t.tabs.model}
+          </button>
   const [language, setLanguage] = useState<"es" | "en">("es");
 
   const toggleLanguage = () => setLanguage((prev) => (prev === "es" ? "en" : "es"));
@@ -1643,6 +1988,7 @@ const TaoDashboard: React.FC = () => {
               color: "#111827",
             }}
           >
+            {t.tabs.narrative}
             <span style={{ color: language === "es" ? "#111827" : "#9ca3af" }}>ES</span>
             <span style={{ color: "#d1d5db" }}>|</span>
             <span style={{ color: language === "en" ? "#111827" : "#9ca3af" }}>EN</span>
