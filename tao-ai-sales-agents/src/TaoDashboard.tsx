@@ -690,6 +690,7 @@ const CashChart: React.FC<{
  *  --------------------------- */
 const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
   const t = copy[language].model;
+const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) => {
   // Defaults comerciales
   const DEFAULT_ASP = 225_000;
   const DEFAULT_CAPTURE_PCT = 3.65;
@@ -1004,7 +1005,7 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
   const teamDashboardHeaders = t.teamTableHeaders;
 
   return (
-    <div style={styles.wrap}>
+    <div data-language={language} style={styles.wrap}>
       {/* Header */}
       <header style={styles.header}>
         <h1 style={styles.h1}>{t.headerTitle}</h1>
@@ -1477,13 +1478,14 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
  *  VISTA: NARRATIVA / STRATEGIA (Slide 2)
  *  --------------------------- */
 const InvestorNarrativeView: React.FC<{ language: Language }> = ({ language }) => {
+const InvestorNarrativeView: React.FC<{ language: "es" | "en" }> = ({ language }) => {
   const [activeTab, setActiveTab] = useState<"narrativa" | "bigdata" | "agents">(
     "narrativa"
   );
   const t = copy[language].narrative;
 
   return (
-    <div style={styles.wrap}>
+    <div data-language={language} style={styles.wrap}>
       <header style={styles.header}>
         <h1 style={styles.h1}>{t.headerTitle}</h1>
       </header>
@@ -1957,18 +1959,66 @@ const TaoDashboard: React.FC = () => {
           >
             {t.tabs.model}
           </button>
+  const [language, setLanguage] = useState<"es" | "en">("es");
+
+  const toggleLanguage = () => setLanguage((prev) => (prev === "es" ? "en" : "es"));
+
+  return (
+    <div style={{ padding: 18 }}>
+      <div
+        style={{ marginBottom: 12, display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}
+      >
+        <h2 style={{ margin: 0, fontSize: 16 }}>TAO Investor Dashboard</h2>
+        <div
+          style={{ marginLeft: "auto", display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}
+        >
           <button
-            onClick={() => setTab("narrative")}
+            onClick={toggleLanguage}
             style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
               padding: "6px 10px",
-              borderRadius: 8,
-              border: tab === "narrative" ? "1px solid #2563eb" : "1px solid #e5e7eb",
-              background: tab === "narrative" ? "#eff6ff" : "#ffffff",
+              borderRadius: 999,
+              border: "1px solid #d1d5db",
+              background: "#ffffff",
               cursor: "pointer",
+              fontSize: 12,
+              fontWeight: 600,
+              color: "#111827",
             }}
           >
             {t.tabs.narrative}
+            <span style={{ color: language === "es" ? "#111827" : "#9ca3af" }}>ES</span>
+            <span style={{ color: "#d1d5db" }}>|</span>
+            <span style={{ color: language === "en" ? "#111827" : "#9ca3af" }}>EN</span>
           </button>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <button
+              onClick={() => setTab("model")}
+              style={{
+                padding: "6px 10px",
+                borderRadius: 8,
+                border: tab === "model" ? "1px solid #2563eb" : "1px solid #e5e7eb",
+                background: tab === "model" ? "#eff6ff" : "#ffffff",
+                cursor: "pointer",
+              }}
+            >
+              Modelo financiero
+            </button>
+            <button
+              onClick={() => setTab("narrative")}
+              style={{
+                padding: "6px 10px",
+                borderRadius: 8,
+                border: tab === "narrative" ? "1px solid #2563eb" : "1px solid #e5e7eb",
+                background: tab === "narrative" ? "#eff6ff" : "#ffffff",
+                cursor: "pointer",
+              }}
+            >
+              Narrativa y estrategia
+            </button>
+          </div>
         </div>
       </div>
 
