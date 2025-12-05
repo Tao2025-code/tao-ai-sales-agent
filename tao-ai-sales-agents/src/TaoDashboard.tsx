@@ -279,7 +279,7 @@ const CashChart: React.FC<{
 /** ---------------------------
  *  VISTA: MODELO FINANCIERO (Slide 1)
  *  --------------------------- */
-const InvestorModelView: React.FC = () => {
+const InvestorModelView: React.FC<{ language: "es" | "en" }> = ({ language }) => {
   // Defaults comerciales
   const DEFAULT_ASP = 225_000;
   const DEFAULT_CAPTURE_PCT = 3.65;
@@ -624,7 +624,7 @@ const InvestorModelView: React.FC = () => {
   ];
 
   return (
-    <div style={styles.wrap}>
+    <div data-language={language} style={styles.wrap}>
       {/* Header */}
       <header style={styles.header}>
         <h1 style={styles.h1}>Vista para Inversionistas — Modelo financiero</h1>
@@ -1156,13 +1156,13 @@ const InvestorModelView: React.FC = () => {
 /** ---------------------------
  *  VISTA: NARRATIVA / STRATEGIA (Slide 2)
  *  --------------------------- */
-const InvestorNarrativeView: React.FC = () => {
+const InvestorNarrativeView: React.FC<{ language: "es" | "en" }> = ({ language }) => {
   const [activeTab, setActiveTab] = useState<"narrativa" | "bigdata" | "agents">(
     "narrativa"
   );
 
   return (
-    <div style={styles.wrap}>
+    <div data-language={language} style={styles.wrap}>
       <header style={styles.header}>
         <h1 style={styles.h1}>
           Vista para Inversionistas — Narrativa y estrategia comercial
@@ -1614,42 +1614,71 @@ const InvestorNarrativeView: React.FC = () => {
  *  --------------------------- */
 const TaoDashboard: React.FC = () => {
   const [tab, setTab] = useState<"model" | "narrative">("model");
+  const [language, setLanguage] = useState<"es" | "en">("es");
+
+  const toggleLanguage = () => setLanguage((prev) => (prev === "es" ? "en" : "es"));
 
   return (
     <div style={{ padding: 18 }}>
-      <div style={{ marginBottom: 12, display: "flex", gap: 8, alignItems: "center" }}>
+      <div
+        style={{ marginBottom: 12, display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}
+      >
         <h2 style={{ margin: 0, fontSize: 16 }}>TAO Investor Dashboard</h2>
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+        <div
+          style={{ marginLeft: "auto", display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}
+        >
           <button
-            onClick={() => setTab("model")}
+            onClick={toggleLanguage}
             style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
               padding: "6px 10px",
-              borderRadius: 8,
-              border: tab === "model" ? "1px solid #2563eb" : "1px solid #e5e7eb",
-              background: tab === "model" ? "#eff6ff" : "#ffffff",
+              borderRadius: 999,
+              border: "1px solid #d1d5db",
+              background: "#ffffff",
               cursor: "pointer",
+              fontSize: 12,
+              fontWeight: 600,
+              color: "#111827",
             }}
           >
-            Modelo financiero
+            <span style={{ color: language === "es" ? "#111827" : "#9ca3af" }}>ES</span>
+            <span style={{ color: "#d1d5db" }}>|</span>
+            <span style={{ color: language === "en" ? "#111827" : "#9ca3af" }}>EN</span>
           </button>
-          <button
-            onClick={() => setTab("narrative")}
-            style={{
-              padding: "6px 10px",
-              borderRadius: 8,
-              border: tab === "narrative" ? "1px solid #2563eb" : "1px solid #e5e7eb",
-              background: tab === "narrative" ? "#eff6ff" : "#ffffff",
-              cursor: "pointer",
-            }}
-          >
-            Narrativa y estrategia
-          </button>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <button
+              onClick={() => setTab("model")}
+              style={{
+                padding: "6px 10px",
+                borderRadius: 8,
+                border: tab === "model" ? "1px solid #2563eb" : "1px solid #e5e7eb",
+                background: tab === "model" ? "#eff6ff" : "#ffffff",
+                cursor: "pointer",
+              }}
+            >
+              Modelo financiero
+            </button>
+            <button
+              onClick={() => setTab("narrative")}
+              style={{
+                padding: "6px 10px",
+                borderRadius: 8,
+                border: tab === "narrative" ? "1px solid #2563eb" : "1px solid #e5e7eb",
+                background: tab === "narrative" ? "#eff6ff" : "#ffffff",
+                cursor: "pointer",
+              }}
+            >
+              Narrativa y estrategia
+            </button>
+          </div>
         </div>
       </div>
 
       <div>
-        {tab === "model" && <InvestorModelView />}
-        {tab === "narrative" && <InvestorNarrativeView />}
+        {tab === "model" && <InvestorModelView language={language} />}
+        {tab === "narrative" && <InvestorNarrativeView language={language} />}
       </div>
     </div>
   );
