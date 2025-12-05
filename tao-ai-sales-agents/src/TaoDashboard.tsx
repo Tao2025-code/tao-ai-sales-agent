@@ -1209,6 +1209,11 @@ const InvestorNarrativeView: React.FC = () => {
         ))}
       </div>
 
+      <p style={{ ...styles.pSmall, marginBottom: 12 }}>
+        Narrativa y Estrategia → visión y modelo de negocio. Big Data → estrategia de 80k leads
+        actuales + 300k–500k nuevos. AI Sales Agents → cómo operan los agentes en el día a día.
+      </p>
+
       {activeTab === "narrativa" && (
         <>
           {/* Resumen */}
