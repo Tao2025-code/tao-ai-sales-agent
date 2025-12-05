@@ -1211,6 +1211,14 @@ const InvestorNarrativeView: React.FC = () => {
 
       {activeTab === "narrativa" && (
         <>
+          <Card style={{ marginBottom: 12 }}>
+            <p style={styles.p}>
+              Estamos creando una operación comercial centrada en datos y agentes de IA que
+              identifican, nutren y escalan a brokers sólo cuando hay alta probabilidad de
+              cierre, reduciendo costos y acelerando conversiones.
+            </p>
+          </Card>
+
           {/* Resumen */}
           <Section title="Resumen en una línea">
             <Card>
@@ -1338,6 +1346,14 @@ const InvestorNarrativeView: React.FC = () => {
 
       {activeTab === "bigdata" && (
         <>
+          <Card style={{ marginBottom: 12 }}>
+            <p style={styles.p}>
+              El plan es limpiar y enriquecer la base de 80k contactos, reactivarlos con agentes de
+              IA y crecerla a 500k+ prospectos cualificados mediante data partners, audiencias por
+              intención y contenidos enfocados en Baja y Riviera Maya.
+            </p>
+          </Card>
+
           {/* ESTRATEGIA BASE DE DATOS 500K+ */}
           <Section title="Estrategia para construir una base de datos de 500,000+ compradores extranjeros">
             <Card>
@@ -1449,6 +1465,14 @@ const InvestorNarrativeView: React.FC = () => {
 
       {activeTab === "agents" && (
         <>
+          <Card style={{ marginBottom: 12 }}>
+            <p style={styles.p}>
+              Los agentes de IA actúan como concierge bilingüe 24/7: capturan leads, los perfilan y
+              recomiendan el inventario correcto, escalando a humanos sólo en momentos clave para
+              cerrar con mayor velocidad y consistencia.
+            </p>
+          </Card>
+
           {/* Flujo del agente */}
           <Section title="Cómo funciona el Agente de Ventas de IA">
             <Card>
