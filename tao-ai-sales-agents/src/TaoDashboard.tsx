@@ -438,6 +438,11 @@ const InvestorModelView: React.FC = () => {
 
   const [y1] = basePnL;
 
+  const closingsSafe = y1.closings > 0 ? y1.closings : 1;
+  const commissionPerClosing = y1.commissionRevenue / closingsSafe;
+  const mediaPerClosing = y1.media / closingsSafe;
+  const netPerClosing = y1.net / closingsSafe;
+
   const brainiumRevShareByYear = basePnL.map(
     (year) => year.commissionRevenue * brainiumRevShareRate
   );
@@ -1076,6 +1081,28 @@ const InvestorModelView: React.FC = () => {
           ) : (
             <div style={styles.controlHelp}>Activa al menos un miembro para ver la tabla.</div>
           )}
+        </Card>
+      </Section>
+
+      <Section title="Unit economics Y1 (escenario base)">
+        <Card>
+          <h3 style={styles.h3}>Unit economics Y1 (escenario base)</h3>
+          <table style={styles.table}>
+            <tbody>
+              <tr>
+                <td style={styles.td}>Ingreso promedio por comisión por cierre</td>
+                <td style={styles.td}>{usd0(commissionPerClosing)}</td>
+              </tr>
+              <tr>
+                <td style={styles.td}>Costo de adquisición por cierre</td>
+                <td style={styles.td}>{usd0(mediaPerClosing)}</td>
+              </tr>
+              <tr>
+                <td style={styles.td}>Contribución neta por cierre</td>
+                <td style={styles.td}>{usd0(netPerClosing)}</td>
+              </tr>
+            </tbody>
+          </table>
         </Card>
       </Section>
 
