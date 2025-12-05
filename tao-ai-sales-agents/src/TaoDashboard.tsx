@@ -1298,6 +1298,41 @@ const InvestorNarrativeView: React.FC = () => {
               </ul>
             </Card>
           </Section>
+
+          <Section title="Roadmap 0–24 meses">
+            <div style={styles.grid3}>
+              <Card>
+                <h3 style={styles.h3}>0–6 meses</h3>
+                <ul style={styles.ul}>
+                  <li>Piloto con leads existentes de TAO.</li>
+                  <li>Primer AI Sales Agent en producción.</li>
+                  <li>Integración básica con CRM y métricas diarias.</li>
+                  <li>Cierre de los primeros deals influenciados por IA.</li>
+                  <li>Playbook inicial de handoff a brokers aliados.</li>
+                </ul>
+              </Card>
+              <Card>
+                <h3 style={styles.h3}>6–12 meses</h3>
+                <ul style={styles.ul}>
+                  <li>Expansión a Baja con inventario priorizado.</li>
+                  <li>Segundo vertical de producto (ej. ranchos sustentables).</li>
+                  <li>Más automatización en scoring y nurturing multicanal.</li>
+                  <li>Onboarding de más brokers con SLAs definidos.</li>
+                  <li>Iteraciones en revenue-share según desempeño.</li>
+                </ul>
+              </Card>
+              <Card>
+                <h3 style={styles.h3}>12–24 meses</h3>
+                <ul style={styles.ul}>
+                  <li>Escalar a desarrolladores aliados fuera de TAO.</li>
+                  <li>Refinar modelo de revenue-share y comisiones.</li>
+                  <li>Productos de datos/insights para socios estratégicos.</li>
+                  <li>Suite estándar de agentes para venta y postventa.</li>
+                  <li>Canales recurrentes con comunidades de compradores.</li>
+                </ul>
+              </Card>
+            </div>
+          </Section>
         </>
       )}
 
