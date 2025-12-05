@@ -622,7 +622,16 @@ const InvestorModelView: React.FC = () => {
     <div style={styles.wrap}>
       {/* Header */}
       <header style={styles.header}>
-        <h1 style={styles.h1}>TAO AI Sales Agents — Investor Dashboard</h1>
+        <h1 style={styles.h1}>Vista para Inversionistas — Modelo financiero</h1>
+        <div style={styles.headStats}>
+          <KeyStat label="Cierres Y1 (escenario base)" value={y1.closings.toLocaleString()} />
+          <KeyStat label="Ingresos por comisiones Y1" value={usd0(y1.commissionRevenue)} />
+          <KeyStat label="Utilidad neta Y1" value={usd0(y1.net)} />
+          <KeyStat
+            label="Mes caja positiva"
+            value={monthOfTurnPositive > 0 ? `Mes ${monthOfTurnPositive}` : "No positivo en Y1"}
+          />
+        </div>
         <div style={{ ...styles.headNote, marginTop: 6 }}>
           AI-first sales engine converting international demand for TAO land and condos into
           high-margin commissions, launching in Riviera Maya and expanding to Baja California.
