@@ -1921,12 +1921,40 @@ const InvestorNarrativeView: React.FC<{ language: "es" | "en" }> = ({ language }
  *  --------------------------- */
 const TaoDashboard: React.FC = () => {
   const [tab, setTab] = useState<"model" | "narrative">("model");
+  const [language, setLanguage] = useState<"ES" | "EN">("ES");
   const [language, setLanguage] = useState<Language>("es");
   const t = copy[language];
 
   return (
     <div style={{ padding: 18 }}>
       <div style={{ marginBottom: 12, display: "flex", gap: 8, alignItems: "center" }}>
+        <h2 style={{ margin: 0, fontSize: 16 }}>TAO Investor Dashboard</h2>
+        <div style={{ marginLeft: "auto", display: "flex", gap: 12, alignItems: "center" }}>
+          <div role="group" aria-label="Seleccionar idioma" style={styles.languageToggle}>
+            {(["ES", "EN"] as const).map((lang) => {
+              const isActive = language === lang;
+
+              return (
+                <button
+                  key={lang}
+                  type="button"
+                  onClick={() => setLanguage(lang)}
+                  aria-pressed={isActive}
+                  aria-label={lang === "ES" ? "Cambiar a Español" : "Switch to English"}
+                  style={{
+                    ...styles.languageButton,
+                    ...(isActive ? styles.languageButtonActive : {}),
+                  }}
+                >
+                  {lang}
+                </button>
+              );
+            })}
+          </div>
+
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              type="button"
         <h2 style={{ margin: 0, fontSize: 16 }}>{t.dashboardTitle}</h2>
         <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
           {["es", "en"].map((lng) => (
@@ -2007,6 +2035,7 @@ const TaoDashboard: React.FC = () => {
               Modelo financiero
             </button>
             <button
+              type="button"
               onClick={() => setTab("narrative")}
               style={{
                 padding: "6px 10px",
@@ -2196,6 +2225,33 @@ const styles: Record<string, React.CSSProperties> = {
     borderCollapse: "separate",
     borderSpacing: 0,
     fontSize: 13,
+  },
+  languageToggle: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 2,
+    padding: 2,
+    borderRadius: 999,
+    border: "1px solid #e5e7eb",
+    background: "#ffffff",
+    boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
+  },
+  languageButton: {
+    padding: "4px 8px",
+    borderRadius: 999,
+    border: "none",
+    background: "transparent",
+    fontSize: 12,
+    fontWeight: 600,
+    color: "#4b5563",
+    cursor: "pointer",
+    lineHeight: 1.2,
+  },
+  languageButtonActive: {
+    color: "#1d4ed8",
+    background: "#eff6ff",
+    fontWeight: 700,
+    textDecoration: "underline",
   },
   th: {
     textAlign: "left",
