@@ -1060,6 +1060,22 @@ const InvestorNarrativeView: React.FC = () => {
         </h1>
       </header>
 
+      <Card style={{ marginBottom: 12 }}>
+        <h3 style={styles.h3}>Investment summary</h3>
+        <ul style={styles.ul}>
+          <li>Stage: internal venture within TAO / pre-seed.</li>
+          <li>
+            Focus: AI Sales Agents to sell and rent TAO inventory (Riviera Maya +
+            Baja).
+          </li>
+          <li>Revenue model: commissions on closings + potential developer fees.</li>
+          <li>
+            Use of capital: fund 12–18 months of ops/product (keep text editable,
+            no exact amounts).
+          </li>
+        </ul>
+      </Card>
+
       <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
         {([
           { id: "narrativa", label: "Narrativa y Estrategia" },
