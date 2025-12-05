@@ -7,11 +7,15 @@ import { styles } from "../styles";
 /** ---------------------------
  *  VISTA: NARRATIVA / STRATEGIA (Slide 2)
  *  --------------------------- */
-const InvestorNarrativeView: React.FC<{ language: Language }> = ({ language }) => {
+type InvestorNarrativeViewProps = {
+  language: Language;
+};
+
+const InvestorNarrativeView: React.FC<InvestorNarrativeViewProps> = ({ language }) => {
+  const t = copy[language].investorNarrativeView;
   const [activeTab, setActiveTab] = useState<"narrativa" | "bigdata" | "agents">(
     "narrativa"
   );
-  const t = copy[language].investorNarrativeView;
   const isMobile = useIsMobile();
   const wrapStyle = { ...styles.wrap, padding: isMobile ? "12px" : styles.wrap.padding };
 
