@@ -1231,6 +1231,18 @@ const InvestorNarrativeView: React.FC = () => {
                 «yo pongo publicidad para que me encuentren» a: «primero veo quién es un cliente
                 potencial para TAO y luego le doy el producto perfecto».
               </p>
+              <h3 style={styles.h3}>Por qué ahora</h3>
+              <ul style={styles.ul}>
+                <li>Los agentes de IA ya operan en WhatsApp, email y voz con suficiente madurez.</li>
+                <li>
+                  TAO tiene inventario listo en Riviera Maya y Baja, más un motor propio de demanda que
+                  deja de depender de un master broker.
+                </li>
+                <li>
+                  Crece el comprador extranjero que quiere retirarse, diversificar o pasar el invierno en
+                  México.
+                </li>
+              </ul>
               <h4 style={{ ...styles.h3, marginTop: 12 }}>La empresa sigue la siguiente lógica:</h4>
               <ol style={styles.ol}>
                 <li>¿Quién es mi comprador?</li>
@@ -1378,6 +1390,22 @@ const InvestorNarrativeView: React.FC = () => {
                   comportamiento (aperturas, clics, respuestas al chat, visitas a landing de Baja) y
                   se pasan a brokers sólo cuando hay alta probabilidad de cierre.
                 </li>
+              </ul>
+            </Card>
+
+            <Card style={{ marginTop: 12 }}>
+              <h3 style={styles.h3}>Riesgos y mitigantes</h3>
+              <ul style={styles.ul}>
+                <li>
+                  Dependencia en inventario TAO; mitigación: brokers humanos en el loop y acuerdos
+                  adicionales con desarrolladores.
+                </li>
+                <li>
+                  Adopción de agentes de IA; mitigación: A/B testing de canales, scripts y handoff a broker
+                  cuando el lead prefiere hablar con una persona.
+                </li>
+                <li>Calidad de datos; mitigación: limpieza continua de la base y scoreo recurrente.</li>
+                <li>Concentración geográfica; mitigación: diversificación gradual entre proyectos Riviera Maya y Baja.</li>
               </ul>
             </Card>
           </Section>
