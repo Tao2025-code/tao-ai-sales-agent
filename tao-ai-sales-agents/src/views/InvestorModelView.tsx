@@ -228,9 +228,8 @@ const InvestorModelView: React.FC<InvestorModelViewProps> = ({ language }) => {
   const DEFAULT_CLOSINGS_Y3 = BASE_CLOSINGS[2];
 
   // Brainium
-  const DEFAULT_BRAINIUM_MONTHLY_FEE = 10_000;
-  const DEFAULT_BRAINIUM_SUCCESS_FEE = 0;
-  const DEFAULT_BRAINIUM_REVSHARE_PCT = 0;
+  const DEFAULT_BRAINIUM_MONTHLY_FEE = 5_000;
+  const DEFAULT_BRAINIUM_REVSHARE_PCT = 1;
 
   // Estado comercial
   const [asp, setAsp] = useState<number>(DEFAULT_ASP);
@@ -246,9 +245,6 @@ const InvestorModelView: React.FC<InvestorModelViewProps> = ({ language }) => {
   // Brainium
   const [brainiumMonthlyFee, setBrainiumMonthlyFee] = useState<number>(
     DEFAULT_BRAINIUM_MONTHLY_FEE
-  );
-  const [brainiumSuccessFee, setBrainiumSuccessFee] = useState<number>(
-    DEFAULT_BRAINIUM_SUCCESS_FEE
   );
   const [brainiumRevSharePct, setBrainiumRevSharePct] = useState<number>(
     DEFAULT_BRAINIUM_REVSHARE_PCT
@@ -272,7 +268,6 @@ const InvestorModelView: React.FC<InvestorModelViewProps> = ({ language }) => {
     setClosingsY3(DEFAULT_CLOSINGS_Y3);
 
     setBrainiumMonthlyFee(DEFAULT_BRAINIUM_MONTHLY_FEE);
-    setBrainiumSuccessFee(DEFAULT_BRAINIUM_SUCCESS_FEE);
     setBrainiumRevSharePct(DEFAULT_BRAINIUM_REVSHARE_PCT);
 
     setSrAnalystHires([...DEFAULT_SR_HIRES]);
@@ -318,7 +313,7 @@ const InvestorModelView: React.FC<InvestorModelViewProps> = ({ language }) => {
 
   const brainiumRevShareRate = brainiumRevSharePct / 100;
   const brainiumFeeY1 = brainiumMonthlyFee * BRAINIUM_FEE_MONTHS;
-  const overheadY1 = OVERHEAD_ANNUAL + brainiumFeeY1 + brainiumSuccessFee;
+  const overheadY1 = OVERHEAD_ANNUAL + brainiumFeeY1;
 
   const teamMembers = buildTeamMembers();
   const activeTeamMembers = teamMembers.filter((member) => member.active);
@@ -385,7 +380,7 @@ const InvestorModelView: React.FC<InvestorModelViewProps> = ({ language }) => {
   const [brainiumRevShareY1, brainiumRevShareY2, brainiumRevShareY3] =
     brainiumRevShareByYear;
 
-  const brainiumTotalY1 = brainiumFeeY1 + brainiumSuccessFee + brainiumRevShareY1;
+  const brainiumTotalY1 = brainiumFeeY1 + brainiumRevShareY1;
   const brainiumTotalY2 = brainiumRevShareY2;
   const brainiumTotalY3 = brainiumRevShareY3;
 
@@ -887,19 +882,6 @@ const InvestorModelView: React.FC<InvestorModelViewProps> = ({ language }) => {
                   style={styles.controlInput}
                 />
                 <div style={styles.controlHelp}>{investorModelCopy.controlGroups.brainium.monthlyHelp}</div>
-              </div>
-
-              <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>{investorModelCopy.controlGroups.brainium.successLabel}</label>
-                <input
-                  type="number"
-                  min={0}
-                  step={1000}
-                  value={brainiumSuccessFee}
-                  onChange={(e) => setBrainiumSuccessFee(Number(e.target.value) || 0)}
-                  style={styles.controlInput}
-                />
-                <div style={styles.controlHelp}>{investorModelCopy.controlGroups.brainium.successHelp}</div>
               </div>
 
               <div style={styles.controlField}>
