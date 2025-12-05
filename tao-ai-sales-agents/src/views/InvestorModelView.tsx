@@ -8,6 +8,10 @@ import { useIsMobile } from "../hooks/useIsMobile";
 import { styles } from "../styles";
 import { pct1, usd0 } from "../utils";
 
+type InvestorModelViewProps = {
+  language: Language;
+};
+
 type PnLYear = {
   year: number;
   closings: number;
@@ -208,8 +212,9 @@ const CashChart: React.FC<{
 /** ---------------------------
  *  VISTA: MODELO FINANCIERO (Slide 1)
  *  --------------------------- */
-const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
-  const t = copy[language].investorModelView;
+const InvestorModelView: React.FC<InvestorModelViewProps> = ({ language }) => {
+  const t = copy[language];
+  const investorModelCopy = t.investorModelView;
   const isMobile = useIsMobile();
   // Defaults comerciales
   const DEFAULT_ASP = 225_000;
@@ -490,7 +495,7 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
   const monthOfTurnPositive = cumulative.findIndex((v) => v > 0) + 1;
 
   /** ---- TABLAS ---- */
-  const pnlHeaders = t.pnlHeaders;
+  const pnlHeaders = investorModelCopy.pnlHeaders;
 
   const pnlRows = basePnL.map((r) => [
     `Y${r.year}`,
@@ -506,7 +511,7 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
     pct1(r.netMarginOnRev),
   ]);
 
-  const sensHeaders = t.sensitivityHeaders;
+  const sensHeaders = investorModelCopy.sensitivityHeaders;
 
   const sensRows = sensitivity.map((s) => [
     s.name,
@@ -522,37 +527,37 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
     pct1(s.netMarginOnRev),
   ]);
 
-  const teamDashboardHeaders = t.teamTableHeaders;
+  const teamDashboardHeaders = investorModelCopy.teamTableHeaders;
   const wrapStyle = { ...styles.wrap, padding: isMobile ? "12px" : styles.wrap.padding };
 
   return (
     <div data-language={language} style={wrapStyle}>
       {/* Header */}
       <header style={styles.header}>
-        <h1 style={styles.h1}>{t.headerTitle}</h1>
+        <h1 style={styles.h1}>{investorModelCopy.headerTitle}</h1>
         <div className="head-stats" style={styles.headStats}>
-          <KeyStat label={t.keyStats.closings} value={y1.closings.toLocaleString()} />
-          <KeyStat label={t.keyStats.commissionRevenue} value={usd0(y1.commissionRevenue)} />
-          <KeyStat label={t.keyStats.netIncome} value={usd0(y1.net)} />
+          <KeyStat label={investorModelCopy.keyStats.closings} value={y1.closings.toLocaleString()} />
+          <KeyStat label={investorModelCopy.keyStats.commissionRevenue} value={usd0(y1.commissionRevenue)} />
+          <KeyStat label={investorModelCopy.keyStats.netIncome} value={usd0(y1.net)} />
           <KeyStat
-            label={t.keyStats.cashMonth}
-            value={t.monthPositive(monthOfTurnPositive)}
+            label={investorModelCopy.keyStats.cashMonth}
+            value={investorModelCopy.monthPositive(monthOfTurnPositive)}
           />
         </div>
-        <div style={{ ...styles.headNote, marginTop: 6 }}>{t.heroSubtitle}</div>
+        <div style={{ ...styles.headNote, marginTop: 6 }}>{investorModelCopy.heroSubtitle}</div>
         <div className="head-stats" style={styles.headStats}>
-          <KeyStat label={t.keyStats.asp} value={usd0(asp)} />
-          <KeyStat label={t.keyStats.capture} value={pct1(capture)} />
+          <KeyStat label={investorModelCopy.keyStats.asp} value={usd0(asp)} />
+          <KeyStat label={investorModelCopy.keyStats.capture} value={pct1(capture)} />
           <KeyStat
-            label={t.keyStats.closeAndCpl}
+            label={investorModelCopy.keyStats.closeAndCpl}
             value={`${pct1(closeRate)} / ${usd0(cpl)}`}
           />
-          <KeyStat label={t.keyStats.salaries} value={usd0(SALARIES_Y1)} />
+          <KeyStat label={investorModelCopy.keyStats.salaries} value={usd0(SALARIES_Y1)} />
         </div>
-        <div style={styles.headNote}>{t.heroNote}</div>
+        <div style={styles.headNote}>{investorModelCopy.heroNote}</div>
         <div style={{ ...styles.headNote, color: "#4b5563" }}>
           <ul className={styles.ul as unknown as string} style={styles.ul}>
-            {t.metricsGlossary.map((item: string) => (
+            {investorModelCopy.metricsGlossary.map((item: string) => (
               <li key={item}>
                 <strong>{item.split(":")[0]}:</strong> {item.split(":").slice(1).join(":").trim()}
               </li>
@@ -560,43 +565,43 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
           </ul>
         </div>
         <div style={{ ...styles.headNote, color: "#111827", background: "#f9fafb", padding: 12 }}>
-          <strong>{t.glossaryTitle}</strong>
+          <strong>{investorModelCopy.glossaryTitle}</strong>
           <ul style={{ margin: "8px 0 0 16px", lineHeight: 1.5 }}>
-            {t.glossaryItems.map((item: string) => (
+            {investorModelCopy.glossaryItems.map((item: string) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
         </div>
       </header>
 
-      <Section title={t.howToReadTitle}>
+      <Section title={investorModelCopy.howToReadTitle}>
         <ul className={styles.ul as unknown as string} style={styles.ul}>
-          {t.howToReadPoints.map((item: string) => (
+          {investorModelCopy.howToReadPoints.map((item: string) => (
             <li key={item}>{item}</li>
           ))}
         </ul>
         <p className={styles.pSmall as unknown as string} style={styles.pSmall}>
-          {t.howToReadDisclaimer}
+          {investorModelCopy.howToReadDisclaimer}
         </p>
       </Section>
 
       {/* Controles */}
-      <Section title={t.controlsTitle}>
+      <Section title={investorModelCopy.controlsTitle}>
         <Card>
           <div style={styles.controlsHeaderRow}>
-            <div style={{ fontSize: 12, color: "#4b5563" }}>{t.controlsRealtimeNote}</div>
+            <div style={{ fontSize: 12, color: "#4b5563" }}>{investorModelCopy.controlsRealtimeNote}</div>
             <button type="button" onClick={handleReset} style={styles.resetButton}>
-              {t.resetButton}
+              {investorModelCopy.resetButton}
             </button>
           </div>
 
           <div className="controls-grid" style={styles.controlsGrid}>
             {/* Supuestos comerciales */}
             <div style={styles.controlGroup}>
-              <div style={styles.controlLabel}>{t.controlGroups.commercial.title}</div>
+              <div style={styles.controlLabel}>{investorModelCopy.controlGroups.commercial.title}</div>
 
               <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>{t.controlGroups.commercial.aspLabel}</label>
+                <label style={styles.controlFieldLabel}>{investorModelCopy.controlGroups.commercial.aspLabel}</label>
                 <input
                   type="number"
                   min={50_000}
@@ -605,11 +610,11 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                   onChange={(e) => setAsp(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>{t.controlGroups.commercial.aspHelp}</div>
+                <div style={styles.controlHelp}>{investorModelCopy.controlGroups.commercial.aspHelp}</div>
               </div>
 
               <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>{t.controlGroups.commercial.captureLabel}</label>
+                <label style={styles.controlFieldLabel}>{investorModelCopy.controlGroups.commercial.captureLabel}</label>
                 <input
                   type="number"
                   min={0}
@@ -619,11 +624,11 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                   onChange={(e) => setCapturePct(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>{t.controlGroups.commercial.captureHelp}</div>
+                <div style={styles.controlHelp}>{investorModelCopy.controlGroups.commercial.captureHelp}</div>
               </div>
 
               <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>{t.controlGroups.commercial.closeRateLabel}</label>
+                <label style={styles.controlFieldLabel}>{investorModelCopy.controlGroups.commercial.closeRateLabel}</label>
                 <input
                   type="number"
                   min={0.1}
@@ -633,11 +638,11 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                   onChange={(e) => setClosePct(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>{t.controlGroups.commercial.closeRateHelp}</div>
+                <div style={styles.controlHelp}>{investorModelCopy.controlGroups.commercial.closeRateHelp}</div>
               </div>
 
               <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>{t.controlGroups.commercial.cplLabel}</label>
+                <label style={styles.controlFieldLabel}>{investorModelCopy.controlGroups.commercial.cplLabel}</label>
                 <input
                   type="number"
                   min={1}
@@ -646,17 +651,17 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                   onChange={(e) => setCpl(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>{t.controlGroups.commercial.cplHelp}</div>
+                <div style={styles.controlHelp}>{investorModelCopy.controlGroups.commercial.cplHelp}</div>
               </div>
             </div>
 
             {/* Cierres / GMV */}
             <div style={styles.controlGroup}>
-              <div style={styles.controlLabel}>{t.controlGroups.commercial.closingsGroupTitle}</div>
+              <div style={styles.controlLabel}>{investorModelCopy.controlGroups.commercial.closingsGroupTitle}</div>
 
               <div style={styles.controlField}>
                 <label style={styles.controlFieldLabel}>
-                  {t.controlGroups.commercial.closingLabelY1}
+                  {investorModelCopy.controlGroups.commercial.closingLabelY1}
                 </label>
                 <input
                   type="number"
@@ -667,7 +672,7 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                   style={styles.controlInput}
                 />
                 <div style={styles.controlHelp}>
-                  {t.controlGroups.commercial.closingHelpY1.replace(
+                  {investorModelCopy.controlGroups.commercial.closingHelpY1.replace(
                     "{gmv}",
                     usd0(closingsY1 * asp)
                   )}
@@ -676,7 +681,7 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
 
               <div style={styles.controlField}>
                 <label style={styles.controlFieldLabel}>
-                  {t.controlGroups.commercial.closingLabelY2}
+                  {investorModelCopy.controlGroups.commercial.closingLabelY2}
                 </label>
                 <input
                   type="number"
@@ -687,7 +692,7 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                   style={styles.controlInput}
                 />
                 <div style={styles.controlHelp}>
-                  {t.controlGroups.commercial.closingHelpY2.replace(
+                  {investorModelCopy.controlGroups.commercial.closingHelpY2.replace(
                     "{gmv}",
                     usd0(closingsY2 * asp)
                   )}
@@ -696,7 +701,7 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
 
               <div style={styles.controlField}>
                 <label style={styles.controlFieldLabel}>
-                  {t.controlGroups.commercial.closingLabelY3}
+                  {investorModelCopy.controlGroups.commercial.closingLabelY3}
                 </label>
                 <input
                   type="number"
@@ -707,7 +712,7 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                   style={styles.controlInput}
                 />
                 <div style={styles.controlHelp}>
-                  {t.controlGroups.commercial.closingHelpY3.replace(
+                  {investorModelCopy.controlGroups.commercial.closingHelpY3.replace(
                     "{gmv}",
                     usd0(closingsY3 * asp)
                   )}
@@ -717,20 +722,20 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
 
             {/* Equipo */}
             <div style={styles.controlGroup}>
-              <div style={styles.controlLabel}>{t.controlGroups.team.title}</div>
+              <div style={styles.controlLabel}>{investorModelCopy.controlGroups.team.title}</div>
 
-              <div style={styles.controlHelp}>{t.controlGroups.team.intro}</div>
+              <div style={styles.controlHelp}>{investorModelCopy.controlGroups.team.intro}</div>
 
               <div style={styles.teamGrid}>
                 <div style={styles.teamMemberCard}>
                   <div style={styles.teamMemberHeader}>
-                    <div style={{ fontWeight: 600 }}>{t.controlGroups.team.srTitle}</div>
+                    <div style={{ fontWeight: 600 }}>{investorModelCopy.controlGroups.team.srTitle}</div>
                   </div>
 
                   <div style={styles.teamFieldsGrid}>
                     <div style={styles.controlField}>
                       <label style={styles.controlFieldLabel}>
-                        {t.controlGroups.team.salaryLabel}
+                        {investorModelCopy.controlGroups.team.salaryLabel}
                       </label>
                       <input
                         type="number"
@@ -740,11 +745,11 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                         onChange={(e) => setSrAnalystSalary(Number(e.target.value) || 0)}
                         style={styles.controlInput}
                       />
-                      <div style={styles.controlHelp}>{t.controlGroups.team.salaryHelpSr}</div>
+                      <div style={styles.controlHelp}>{investorModelCopy.controlGroups.team.salaryHelpSr}</div>
                     </div>
 
                     <div style={styles.controlField}>
-                      <label style={styles.controlFieldLabel}>{t.controlGroups.team.countLabel}</label>
+                      <label style={styles.controlFieldLabel}>{investorModelCopy.controlGroups.team.countLabel}</label>
                       <select
                         value={srAnalystHires.length}
                         onChange={(e) =>
@@ -761,13 +766,13 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                         ))}
                       </select>
                       <div style={styles.controlHelp}>
-                        {t.controlGroups.team.srCountHelp}
+                        {investorModelCopy.controlGroups.team.srCountHelp}
                       </div>
                     </div>
 
                     {srAnalystHires.map((year, idx) => (
                       <div key={idx} style={styles.controlField}>
-                        <label style={styles.controlFieldLabel}>{`${t.controlGroups.team.yearLabel} ${idx + 1}`}</label>
+                        <label style={styles.controlFieldLabel}>{`${investorModelCopy.controlGroups.team.yearLabel} ${idx + 1}`}</label>
                         <select
                           value={year}
                           onChange={(e) =>
@@ -792,13 +797,13 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
 
                 <div style={styles.teamMemberCard}>
                   <div style={styles.teamMemberHeader}>
-                    <div style={{ fontWeight: 600 }}>{t.controlGroups.team.jrTitle}</div>
+                    <div style={{ fontWeight: 600 }}>{investorModelCopy.controlGroups.team.jrTitle}</div>
                   </div>
 
                   <div style={styles.teamFieldsGrid}>
                     <div style={styles.controlField}>
                       <label style={styles.controlFieldLabel}>
-                        {t.controlGroups.team.salaryLabel}
+                        {investorModelCopy.controlGroups.team.salaryLabel}
                       </label>
                       <input
                         type="number"
@@ -808,11 +813,11 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                         onChange={(e) => setJrAnalystSalary(Number(e.target.value) || 0)}
                         style={styles.controlInput}
                       />
-                      <div style={styles.controlHelp}>{t.controlGroups.team.salaryHelpJr}</div>
+                      <div style={styles.controlHelp}>{investorModelCopy.controlGroups.team.salaryHelpJr}</div>
                     </div>
 
                     <div style={styles.controlField}>
-                      <label style={styles.controlFieldLabel}>{t.controlGroups.team.countLabel}</label>
+                      <label style={styles.controlFieldLabel}>{investorModelCopy.controlGroups.team.countLabel}</label>
                       <select
                         value={jrAnalystHires.length}
                         onChange={(e) =>
@@ -829,13 +834,13 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                         ))}
                       </select>
                       <div style={styles.controlHelp}>
-                        {t.controlGroups.team.jrCountHelp}
+                        {investorModelCopy.controlGroups.team.jrCountHelp}
                       </div>
                     </div>
 
                     {jrAnalystHires.map((year, idx) => (
                       <div key={idx} style={styles.controlField}>
-                        <label style={styles.controlFieldLabel}>{`${t.controlGroups.team.yearLabel} ${idx + 1}`}</label>
+                        <label style={styles.controlFieldLabel}>{`${investorModelCopy.controlGroups.team.yearLabel} ${idx + 1}`}</label>
                         <select
                           value={year}
                           onChange={(e) =>
@@ -867,11 +872,11 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
 
             {/* Brainium */}
             <div style={styles.controlGroup}>
-              <div style={styles.controlLabel}>{t.controlGroups.brainium.title}</div>
+              <div style={styles.controlLabel}>{investorModelCopy.controlGroups.brainium.title}</div>
 
               <div style={styles.controlField}>
                 <label style={styles.controlFieldLabel}>
-                  {t.controlGroups.brainium.monthlyLabel.replace("{months}", `${BRAINIUM_FEE_MONTHS}`)}
+                  {investorModelCopy.controlGroups.brainium.monthlyLabel.replace("{months}", `${BRAINIUM_FEE_MONTHS}`)}
                 </label>
                 <input
                   type="number"
@@ -881,11 +886,11 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                   onChange={(e) => setBrainiumMonthlyFee(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>{t.controlGroups.brainium.monthlyHelp}</div>
+                <div style={styles.controlHelp}>{investorModelCopy.controlGroups.brainium.monthlyHelp}</div>
               </div>
 
               <div style={styles.controlField}>
-                <label style={styles.controlFieldLabel}>{t.controlGroups.brainium.successLabel}</label>
+                <label style={styles.controlFieldLabel}>{investorModelCopy.controlGroups.brainium.successLabel}</label>
                 <input
                   type="number"
                   min={0}
@@ -894,12 +899,12 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                   onChange={(e) => setBrainiumSuccessFee(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>{t.controlGroups.brainium.successHelp}</div>
+                <div style={styles.controlHelp}>{investorModelCopy.controlGroups.brainium.successHelp}</div>
               </div>
 
               <div style={styles.controlField}>
                 <label style={styles.controlFieldLabel}>
-                  {t.controlGroups.brainium.revshareLabel}
+                  {investorModelCopy.controlGroups.brainium.revshareLabel}
                 </label>
                 <input
                   type="number"
@@ -912,11 +917,11 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
                   }
                   style={styles.controlInput}
                 />
-                <div style={styles.controlHelp}>{t.controlGroups.brainium.revshareHelp}</div>
+                <div style={styles.controlHelp}>{investorModelCopy.controlGroups.brainium.revshareHelp}</div>
               </div>
 
               <div style={styles.controlHelp}>
-                {t.controlGroups.brainium.totalsHelp
+                {investorModelCopy.controlGroups.brainium.totalsHelp
                   .replace("{y1}", usd0(brainiumTotalY1))
                   .replace("{y2}", usd0(brainiumTotalY2))
                   .replace("{y3}", usd0(brainiumTotalY3))}
@@ -926,32 +931,32 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
         </Card>
       </Section>
 
-      <Section title={t.sectionTitles.teamDashboard}>
+      <Section title={investorModelCopy.sectionTitles.teamDashboard}>
         <Card>
           {activeTeamMembers.length > 0 ? (
             <Table headers={teamDashboardHeaders} rows={teamDashboardRows} />
           ) : (
-            <div style={styles.controlHelp}>{t.teamTableEmpty}</div>
+            <div style={styles.controlHelp}>{investorModelCopy.teamTableEmpty}</div>
           )}
         </Card>
       </Section>
 
-      <Section title={t.sectionTitles.unitEconomics}>
+      <Section title={investorModelCopy.sectionTitles.unitEconomics}>
         <Card>
-          <h3 style={styles.h3}>{t.sectionTitles.unitEconomics}</h3>
+          <h3 style={styles.h3}>{investorModelCopy.sectionTitles.unitEconomics}</h3>
           <div className="table-wrapper" style={{ overflowX: "auto" }}>
             <table style={styles.table}>
               <tbody>
                 <tr>
-                  <td style={styles.td}>{t.unitEconomicsRows.commission}</td>
+                  <td style={styles.td}>{investorModelCopy.unitEconomicsRows.commission}</td>
                   <td style={styles.td}>{usd0(commissionPerClosing)}</td>
                 </tr>
                 <tr>
-                  <td style={styles.td}>{t.unitEconomicsRows.acquisition}</td>
+                  <td style={styles.td}>{investorModelCopy.unitEconomicsRows.acquisition}</td>
                   <td style={styles.td}>{usd0(mediaPerClosing)}</td>
                 </tr>
                 <tr>
-                  <td style={styles.td}>{t.unitEconomicsRows.contribution}</td>
+                  <td style={styles.td}>{investorModelCopy.unitEconomicsRows.contribution}</td>
                   <td style={styles.td}>{usd0(netPerClosing)}</td>
                 </tr>
               </tbody>
@@ -961,39 +966,39 @@ const InvestorModelView: React.FC<{ language: Language }> = ({ language }) => {
       </Section>
 
       {/* P&L */}
-      <Section title={t.sectionTitles.pnl}>
+      <Section title={investorModelCopy.sectionTitles.pnl}>
         <Card>
           <Table headers={pnlHeaders} rows={pnlRows} />
         </Card>
       </Section>
 
       {/* Sensibilidad */}
-      <Section title={t.sectionTitles.sensitivity}>
+      <Section title={investorModelCopy.sectionTitles.sensitivity}>
         <Card>
           <Table headers={sensHeaders} rows={sensRows} />
         </Card>
       </Section>
 
       {/* Caja */}
-      <Section title={t.sectionTitles.cash}>
+      <Section title={investorModelCopy.sectionTitles.cash}>
         <div style={styles.grid2}>
           <Card>
-            <CashChart data={cumulative} title={t.cashChartTitle} />
+            <CashChart data={cumulative} title={investorModelCopy.cashChartTitle} />
           </Card>
           <Card>
-            <h3 style={styles.h3}>{t.cashSummaryTitle}</h3>
+            <h3 style={styles.h3}>{investorModelCopy.cashSummaryTitle}</h3>
             <ul style={styles.ul}>
               <li>
-                {t.cashSummary.burn} <strong>{usd0(-MONTHLY_BURN_PRE_SALES)}</strong>
+                {investorModelCopy.cashSummary.burn} <strong>{usd0(-MONTHLY_BURN_PRE_SALES)}</strong>
               </li>
               <li>
-                {t.cashSummary.net} <strong>{usd0(MONTHLY_NET_POST_SALES)}</strong>
+                {investorModelCopy.cashSummary.net} <strong>{usd0(MONTHLY_NET_POST_SALES)}</strong>
               </li>
               <li>
-                {t.cashSummary.deficit} <strong>{usd0(Math.abs(maxDeficit))}</strong>
+                {investorModelCopy.cashSummary.deficit} <strong>{usd0(Math.abs(maxDeficit))}</strong>
               </li>
               <li>
-                {t.cashSummary.turn} <strong>{monthOfTurnPositive}</strong>.
+                {investorModelCopy.cashSummary.turn} <strong>{monthOfTurnPositive}</strong>.
               </li>
             </ul>
           </Card>
