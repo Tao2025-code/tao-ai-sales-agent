@@ -650,11 +650,23 @@ const InvestorModelView: React.FC = () => {
           comisiones, márgenes y caja en tiempo real.
         </div>
         <div style={{ ...styles.headNote, color: "#4b5563" }}>
-          Los supuestos se calculan así: ASP es el ticket medio elegido; captura mezclada aplica ese %
-          sobre el GMV (cierres × ASP) como ingreso por comisión; la tasa de cierre es el porcentaje de
-          leads que se convierten en cierres y el CPL es el costo unitario de cada lead (leads =
-          cierres / tasa de cierre y medios = leads × CPL); los sueldos anuales Y1 suman los salarios
-          mensuales activos del equipo en Y1 × 12.
+          <ul className={styles.ul as unknown as string} style={styles.ul}>
+            <li>
+              <strong>ASP:</strong> ticket medio por unidad vendida (USD) sobre el cual se calcula el GMV.
+            </li>
+            <li>
+              <strong>Captura mezclada:</strong> comisión promedio aplicada al GMV para estimar ingresos.
+            </li>
+            <li>
+              <strong>Tasa de cierre:</strong> porcentaje de leads calificados que terminan en un cierre.
+            </li>
+            <li>
+              <strong>CPL mezclado:</strong> costo promedio por lead considerando canales pagados y orgánicos.
+            </li>
+            <li>
+              <strong>Cierres Y1/Y2/Y3:</strong> metas de transacciones anuales que impulsan el GMV.
+            </li>
+          </ul>
         </div>
         <div style={{ ...styles.headNote, color: "#111827", background: "#f9fafb", padding: 12 }}>
           <strong>Justificación de valores iniciales.</strong>
@@ -732,6 +744,9 @@ const InvestorModelView: React.FC = () => {
                   onChange={(e) => setAsp(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
+                <div style={styles.controlHelp}>
+                  Ticket promedio por operación; USD 180k–260k es común para lotes y condos.
+                </div>
               </div>
 
               <div style={styles.controlField}>
@@ -745,6 +760,9 @@ const InvestorModelView: React.FC = () => {
                   onChange={(e) => setCapturePct(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
+                <div style={styles.controlHelp}>
+                  Comisión promedio sobre GMV; blends de 3%–5% son habituales según mix de proyectos.
+                </div>
               </div>
 
               <div style={styles.controlField}>
@@ -758,6 +776,9 @@ const InvestorModelView: React.FC = () => {
                   onChange={(e) => setClosePct(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
+                <div style={styles.controlHelp}>
+                  Porcentaje de leads calificados que cierran; 1%–3% es razonable para campañas digitales.
+                </div>
               </div>
 
               <div style={styles.controlField}>
@@ -770,6 +791,9 @@ const InvestorModelView: React.FC = () => {
                   onChange={(e) => setCpl(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
+                <div style={styles.controlHelp}>
+                  Costo promedio por lead combinando orgánico y pagado; USD 20–40 suele ser el rango.
+                </div>
               </div>
             </div>
 
@@ -788,7 +812,8 @@ const InvestorModelView: React.FC = () => {
                   style={styles.controlInput}
                 />
                 <div style={styles.controlHelp}>
-                  GMV estimado Y1: <strong>{usd0(closingsY1 * asp)}</strong>
+                  Meta de transacciones en el año; decenas de cierres generan GMV de
+                  <strong> {usd0(closingsY1 * asp)}</strong> con el ASP indicado.
                 </div>
               </div>
 
@@ -803,7 +828,8 @@ const InvestorModelView: React.FC = () => {
                   style={styles.controlInput}
                 />
                 <div style={styles.controlHelp}>
-                  GMV estimado Y2: <strong>{usd0(closingsY2 * asp)}</strong>
+                  Escala anual proyectada; con este ASP, el GMV de referencia es
+                  <strong> {usd0(closingsY2 * asp)}</strong>.
                 </div>
               </div>
 
@@ -818,7 +844,8 @@ const InvestorModelView: React.FC = () => {
                   style={styles.controlInput}
                 />
                 <div style={styles.controlHelp}>
-                  GMV estimado Y3: <strong>{usd0(closingsY3 * asp)}</strong>
+                  Proyección de cierres con madurez del funnel; el GMV estimado es
+                  <strong> {usd0(closingsY3 * asp)}</strong>.
                 </div>
               </div>
             </div>
@@ -848,6 +875,9 @@ const InvestorModelView: React.FC = () => {
                         onChange={(e) => setSrAnalystSalary(Number(e.target.value) || 0)}
                         style={styles.controlInput}
                       />
+                      <div style={styles.controlHelp}>
+                        Salario mensual bruto; perfiles senior en MX suelen estar en USD 3k–5k.
+                      </div>
                     </div>
 
                     <div style={styles.controlField}>
@@ -867,6 +897,9 @@ const InvestorModelView: React.FC = () => {
                           </option>
                         ))}
                       </select>
+                      <div style={styles.controlHelp}>
+                        Define la cantidad de contrataciones para este rol; 0–2 suele ser realista en arranque.
+                      </div>
                     </div>
 
                     {srAnalystHires.map((year, idx) => (
@@ -910,6 +943,9 @@ const InvestorModelView: React.FC = () => {
                         onChange={(e) => setJrAnalystSalary(Number(e.target.value) || 0)}
                         style={styles.controlInput}
                       />
+                      <div style={styles.controlHelp}>
+                        Salario mensual bruto; perfiles junior en MX suelen ir de USD 1.5k–3k.
+                      </div>
                     </div>
 
                     <div style={styles.controlField}>
@@ -929,6 +965,9 @@ const InvestorModelView: React.FC = () => {
                           </option>
                         ))}
                       </select>
+                      <div style={styles.controlHelp}>
+                        Ajusta el número de analistas junior; arrancar con 0–2 mantiene la estructura ligera.
+                      </div>
                     </div>
 
                     {jrAnalystHires.map((year, idx) => (
@@ -979,6 +1018,9 @@ const InvestorModelView: React.FC = () => {
                   onChange={(e) => setBrainiumMonthlyFee(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
+                <div style={styles.controlHelp}>
+                  Retainer mensual inicial; suele estar entre USD 5k–10k según alcance.
+                </div>
               </div>
 
               <div style={styles.controlField}>
@@ -991,6 +1033,9 @@ const InvestorModelView: React.FC = () => {
                   onChange={(e) => setBrainiumSuccessFee(Number(e.target.value) || 0)}
                   style={styles.controlInput}
                 />
+                <div style={styles.controlHelp}>
+                  Bono único por implementación exitosa; entre USD 5k–15k es típico.
+                </div>
               </div>
 
               <div style={styles.controlField}>
@@ -1008,6 +1053,9 @@ const InvestorModelView: React.FC = () => {
                   }
                   style={styles.controlInput}
                 />
+                <div style={styles.controlHelp}>
+                  Porcentaje variable sobre ingresos de comisión; rangos de 5%–15% son comunes.
+                </div>
               </div>
 
               <div style={styles.controlHelp}>
